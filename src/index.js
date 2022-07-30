@@ -1,0 +1,2 @@
+export { ReportPlugin } from './plugin';
+

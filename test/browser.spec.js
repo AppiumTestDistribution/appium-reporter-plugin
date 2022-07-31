@@ -1,11 +1,11 @@
-import { remote } from "webdriverio";
-import { WDIO_PARAMS, androidCapabilities } from "./wdio.config";
-import fetch from "node-fetch";
+import { remote } from 'webdriverio';
+import { WDIO_PARAMS, androidCapabilities } from './wdio.config';
+import fetch from 'node-fetch';
 import fs from 'fs';
 
 let driver;
 
-describe("Plugin Test", () => {
+describe('Plugin Test', () => {
   beforeEach(async () => {
     driver = await remote({
       ...WDIO_PARAMS,
@@ -17,27 +17,32 @@ describe("Plugin Test", () => {
       const response = await fetch(url);
       const data = await response.json();
       const value = await data.value;
-      return value.replaceAll('"','\'').replaceAll('\\n','');
-    })
+      return value.replaceAll('"', '\'').replaceAll('\\n', '');
+    });
   });
 
-  async function createReportFile(sessionID, data){
-    fs.writeFile(`${__dirname}/../appium-reports/${sessionID}.html`, JSON.stringify(data), 'utf-8', function (err) {
+  async function createReportFile(sessionID, data) {
+    fs.writeFile(
+      `${__dirname}/../appium-reports/${sessionID}.html`,
+      JSON.stringify(data),
+      'utf-8',
+      function (err) {
         if (err) throw err;
-    });
-  } 
+      }
+    );
+  }
 
-  it("Sample test", async () => {
-    await driver.url("https://practicetestautomation.com/practice-test-login/");
-    const uelement = await driver.$("#username");
-    await uelement.setValue("test123");
-    const pelement = await driver.$("#password");
-    await pelement.setValue("test123");
+  it('Sample test', async () => {
+    await driver.url('https://practicetestautomation.com/practice-test-login/');
+    const uelement = await driver.$('#username');
+    await uelement.setValue('test123');
+    const pelement = await driver.$('#password');
+    await pelement.setValue('test123');
   });
 
   afterEach(async () => {
     const data = await driver.getReport(driver.sessionId);
     await createReportFile(driver.sessionId, data);
-    await driver.deleteSession()
+    await driver.deleteSession();
   });
 });

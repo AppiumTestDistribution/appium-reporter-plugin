@@ -1,5 +1,5 @@
 import { remote } from 'webdriverio';
-import fetch from "node-fetch";
+import fetch from 'node-fetch';
 import fs from 'fs';
 
 const APPIUM_HOST = '127.0.0.1';
@@ -15,7 +15,8 @@ const capabilities = {
   platformName: 'Android',
   'appium:uiautomator2ServerInstallTimeout': '50000',
   'appium:automationName': 'UIAutomator2',
-  'appium:app': '/Users/dileepbellamkonda/Documents/ATD/org/appium-reporter/apps/VodQA.apk',
+  // replace the path absolute path of VodQA.apk under apps
+  'appium:app': '../VodQA.apk',
 };
 let driver;
 describe('Plugin Test', () => {
@@ -23,20 +24,25 @@ describe('Plugin Test', () => {
     driver = await remote({ ...WDIO_PARAMS, capabilities });
 
     driver.addCommand('getReport', async function (sessionId) {
-            const url = `http://localhost:4723/session/${sessionId}/getReport`;
-            const response = await fetch(url);
-            const data = await response.json();
-            const value = await data.value;
-            return value.replaceAll('"','\'').replaceAll('\\n','');
-        });
+      const url = `http://localhost:4723/session/${sessionId}/getReport`;
+      const response = await fetch(url);
+      const data = await response.json();
+      const value = await data.value;
+      return value.replaceAll('"', '\'').replaceAll('\\n', '');
     });
-  
-    async function createReportFile(sessionID, data){
-        fs.writeFile(`${__dirname}/../appium-reports/${sessionID}.html`, JSON.stringify(data), 'utf-8', function (err) {
-            if (err) throw err;
-            console.log(`Report file for ${sessionID} is creation is init`);
-        });
-    } 
+  });
+
+  async function createReportFile(sessionID, data) {
+    fs.writeFile(
+      `${__dirname}/../appium-reports/${sessionID}.html`,
+      JSON.stringify(data),
+      'utf-8',
+      function (err) {
+        if (err) throw err;
+        console.log(`Report file for ${sessionID} is creation is init`);
+      }
+    );
+  }
 
   it('Vertical swipe test', async () => {
     console.log(await driver.capabilities.deviceUDID);
@@ -44,9 +50,9 @@ describe('Plugin Test', () => {
     await driver.$('~verticalSwipe').click();
   });
 
-    afterEach(async () => {
-        const data = await driver.getReport(driver.sessionId);
-        await createReportFile(driver.sessionId, data);
-        await driver.deleteSession();
-    });
+  afterEach(async () => {
+    const data = await driver.getReport(driver.sessionId);
+    await createReportFile(driver.sessionId, data);
+    await driver.deleteSession();
+  });
 });

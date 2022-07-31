@@ -16,7 +16,7 @@ const capabilities = {
   'appium:uiautomator2ServerInstallTimeout': '50000',
   'appium:automationName': 'UIAutomator2',
   // replace the path absolute path of VodQA.apk under apps
-  'appium:app': '../VodQA.apk',
+  'appium:app': '../apps/VodQA.apk',
 };
 let driver;
 describe('Plugin Test', () => {
@@ -28,20 +28,14 @@ describe('Plugin Test', () => {
       const response = await fetch(url);
       const data = await response.json();
       const value = await data.value;
-      return value.replaceAll('"', '\'').replaceAll('\\n', '');
+      return value;
     });
   });
 
   async function createReportFile(sessionID, data) {
-    fs.writeFile(
-      `${__dirname}/../appium-reports/${sessionID}.html`,
-      JSON.stringify(data),
-      'utf-8',
-      function (err) {
-        if (err) throw err;
-        console.log(`Report file for ${sessionID} is creation is init`);
-      }
-    );
+    fs.writeFile(`${__dirname}/../appium-reports/${sessionID}.html`, data, 'utf-8', (err) => {
+      if (err) throw err;
+    });
   }
 
   it('Vertical swipe test', async () => {

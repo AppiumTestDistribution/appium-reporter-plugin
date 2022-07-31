@@ -21,21 +21,18 @@
 
 
 ToDo
-* Add example of using plugin readme
+* Add examples of using plugin in readme
 * Make report pretty 
-* Remove `undefined` in report 
 * expose resize params as arguments 
-* Standalone server 
+* Standalone server to view reports
 * Ability to delete old reports 
 * Flag retry commands
-* extra details to report ex: time take, pass/fail status etc
-* Add New commands for adding test title and marking test pass/fail status to report
-* githooks
-* github pipeline
+* add extra details to report ex: time take, pass/fail status etc
+* Add New commands for adding test title, test pass/fail status
+* githooks for lint and pretty
+* github pipelines
 * unit tests
-* Refactor reporter.js. Move html parts out
-* fix two lint errors in tests
-* Simplify report saving on client side. 
+* Simplify report saving in tests. 
 * add tests for ios
 
 PS: Delete once above are done. Order if items is not priority.

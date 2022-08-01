@@ -2,6 +2,7 @@ import BasePlugin from '@appium/base-plugin';
 import sharp from 'sharp';
 import Reporter from './reporter';
 const { v4: uuidv4 } = require('uuid');
+const prettyHrtime = require('pretty-hrtime');
 
 export class ReportPlugin extends BasePlugin {
   // value should be in lowercase
@@ -27,8 +28,9 @@ export class ReportPlugin extends BasePlugin {
   }
 
   async handle(next, driver, commandName) {
-    const result = await next();
     if (!this.cmdExclusionList.includes(commandName.toLowerCase())) {
+      const start = process.hrtime();
+      const result = await next();
       let base64screenshot = await driver.getScreenshot();
 
       const buffer = base64screenshot.split(';base64,').pop();
@@ -53,8 +55,12 @@ export class ReportPlugin extends BasePlugin {
         });
       img = `data:image/jpeg;base64, ${img}`;
       const cmdId = await uuidv4();
-      await Reporter.updateJsonValue(driver.sessionId, commandName, img, cmdId);
+      const end = process.hrtime(start);
+      const time = prettyHrtime(end);
+      const data = { 'execution time': time };
+      await Reporter.updateJsonValue(driver.sessionId, cmdId, commandName, img, data);
+      return result;
     }
-    return result;
+    return await next();
   }
 }

@@ -23,22 +23,53 @@ export const cmdDataStart = `<div class='container-fluid'>
 export const cmdDataEnd = '</ul></div>';
 
 export const screenshotSection = `<div class='col-sm-8 main  overflow-auto'>
-<h1 class='page-header' id='cmdName'>Dashboard</h1>
-<img id='cmd-context' src='' alt='No Image'></img>
-<div class='row placeholders'>
-<div class='col-xs-6 col-sm-3 placeholder'>
-</div></div></div></div></div>`;
+<h3 class='page-header text-center' id='cmdName'></h3>
+<div class = 'row'>
+  <img id='cmd-context' class='border col-xs-4 img-responsive'' alt='No Image' width='300' onclick='goFullscreen(this)' src=''>
+  <div class='col-xs-2'></div>
+  <div class=" col-xs-6 table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>Time Taken</th>
+                <td>Lorem</td>
+            </tr>
+            <tr>
+                <th>Session Id</th>
+                <td>Lorem</td>
+            </tr>
+            <tr>
+                <th>Element Id</th>
+                <td>Lorem</td>
+            </tr>
+        </tbody>
+    </table>
+  </div>
+  </div></div></div></div>`;
 
-export const onclickfunction = `<script lang='javascript'>
+export const onclickfunction = `<script>
   function setData(key, id) {
     const dataId = key + id;
-    const img = data['data'][dataId];
+    const cmdData = data['data'][dataId];
     const header = document.getElementById('cmdName');
     header.innerHTML = key;
-    if(img) { 
-        document.getElementById('cmd-context').src = img; 
+    if(cmdData.img) { 
+        document.getElementById('cmd-context').src = cmdData.img; 
     } else { 
         document.getElementById('cmd-context').src = noImg; 
+    }
+  }
+  function goFullscreen(element) {
+    if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullScreen) {
+        element.webkitRequestFullScreen();
     }
   }
   </script>`;

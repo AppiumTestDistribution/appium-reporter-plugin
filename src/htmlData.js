@@ -16,29 +16,32 @@ export const titleContext = `<body style='padding-top: 20px; padding-bottom: 20p
 </div></div></nav>`;
 
 export const cmdDataStart = `<div class='container-fluid'>
-  <div class='row padding-md'>
-  <div class='col-sm-1 col-md-2 sidebar'>
-  <ul class='nav nav-sidebar' id='cmd'>`;
+<div class='row padding-md'>
+<div class='col-sm-1 col-md-2 sidebar'>
+<ul class='nav nav-sidebar' id='cmd'>`;
 
 export const cmdDataEnd = '</ul></div>';
 
 export const screenshotSection = `<div class='col-sm-8 main  overflow-auto'>
-    <h1 class='page-header'>Dashboard</h1>
-    <img id='cmd-context' src='' alt='No Image'></img>
-  <div class='row placeholders'>
-  <div class='col-xs-6 col-sm-3 placeholder'>
-  </div></div></div></div></div>`;
+<h1 class='page-header' id='cmdName'>Dashboard</h1>
+<img id='cmd-context' src='' alt='No Image'></img>
+<div class='row placeholders'>
+<div class='col-xs-6 col-sm-3 placeholder'>
+</div></div></div></div></div>`;
 
 export const onclickfunction = `<script lang='javascript'>
-function setData(key) {
-    let img = data['data'][key];
+  function setData(key, id) {
+    const dataId = key + id;
+    const img = data['data'][dataId];
+    const header = document.getElementById('cmdName');
+    header.innerHTML = key;
     if(img) { 
         document.getElementById('cmd-context').src = img; 
     } else { 
         document.getElementById('cmd-context').src = noImg; 
     }
-    }
-    </script>`;
+  }
+  </script>`;
 
 export const end = '</body></html>';
 

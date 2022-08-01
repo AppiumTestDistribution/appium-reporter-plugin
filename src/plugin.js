@@ -4,7 +4,8 @@ import Reporter from './reporter';
 const { v4: uuidv4 } = require('uuid');
 
 export class ReportPlugin extends BasePlugin {
-  cmdExclusionList = ['deletesession', 'title', 'screenshot'];
+  // value should be in lowercase
+  cmdExclusionList = ['createsession', 'deletesession', 'title', 'screenshot'];
 
   constructor(pluginName) {
     console.log(`In plugin cons = ${pluginName}`);
@@ -23,11 +24,6 @@ export class ReportPlugin extends BasePlugin {
 
   async getReport(_next, driver) {
     return await Reporter.buildReport(driver.sessionId);
-  }
-
-  async createSession(next) {
-    const session = await next();
-    return session;
   }
 
   async handle(next, driver, commandName) {
@@ -49,7 +45,6 @@ export class ReportPlugin extends BasePlugin {
         .toFormat('jpeg', { mozjpeg: true })
         .toBuffer()
         .then((data) => {
-          console.log('success');
           return data.toString('base64');
         })
         .catch((err) => {

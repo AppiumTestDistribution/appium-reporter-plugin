@@ -10,7 +10,6 @@ import {
 } from './htmlData';
 
 const editJsonFile = require('edit-json-file');
-const fs = require('fs');
 
 async function createSesssionDataStore(sessionID) {
   let file = editJsonFile(`${__dirname}/${sessionID}.json`);
@@ -27,9 +26,6 @@ async function updateJsonValue(sessionID, key, value, cmdId) {
 }
 
 async function buildReport(sessionID) {
-  await createReportFile(sessionID);
-  let html = headerSection + titleContext;
-  await appendDataToFile(sessionID, html);
   let file = editJsonFile(`${__dirname}/${sessionID}.json`);
 
   let scriptData = `<script lang='javascript'>
@@ -42,32 +38,29 @@ async function buildReport(sessionID) {
     );
   </script>`;
 
-  await appendDataToFile(sessionID, scriptData);
-  await appendDataToFile(sessionID, onclickfunction);
-
   let cmdLinks = '';
   let cmds = file.get('cmd');
   cmds.forEach((cmd) => {
     cmdLinks =
-      cmdLinks + `<li onclick=setData('${cmd[0] + cmd[1]}')><a href='#'>${cmd[0]}</a></li>`;
+      cmdLinks + `<li onclick=setData('${cmd[0]}','${cmd[1]}')><a href='#'>${cmd[0]}</a></li>`;
   });
 
-  let UIElements = cmdDataStart + cmdLinks + cmdDataEnd + screenshotSection + end;
-  await appendDataToFile(sessionID, UIElements);
-  const report = html + scriptData + onclickfunction + UIElements;
+  // let html = headerSection + titleContext;
+  // let UIElements = cmdDataStart + cmdLinks + cmdDataEnd + screenshotSection + end;
+  // const report = html + scriptData + onclickfunction + UIElements;
+
+  const report =
+    headerSection +
+    titleContext +
+    scriptData +
+    onclickfunction +
+    cmdDataStart +
+    cmdLinks +
+    cmdDataEnd +
+    screenshotSection +
+    end;
+
   return report.replace(/(\r\n|\n|\r)/gm, '');
-}
-
-async function createReportFile(sessionID) {
-  fs.writeFile(`${__dirname}/${sessionID}.html`, '', function (err) {
-    if (err) throw err;
-  });
-}
-
-async function appendDataToFile(sessionID, data) {
-  fs.appendFile(`${__dirname}/${sessionID}.html`, data, function (err) {
-    if (err) throw err;
-  });
 }
 
 module.exports = {

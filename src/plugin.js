@@ -27,7 +27,7 @@ export class ReportPlugin extends BasePlugin {
     return await Reporter.buildReport(driver.sessionId);
   }
 
-  async handle(next, driver, commandName) {
+  async handle(next, driver, commandName, ...args) {
     if (!this.cmdExclusionList.includes(commandName.toLowerCase())) {
       const start = process.hrtime();
       const result = await next();
@@ -58,6 +58,9 @@ export class ReportPlugin extends BasePlugin {
       const end = process.hrtime(start);
       const time = prettyHrtime(end);
       const data = { 'execution time': time };
+      data['sessionId'] = driver.sessionId;
+      if (result) data['response'] = result;
+      if (args) data['request'] = args;
       await Reporter.updateJsonValue(driver.sessionId, cmdId, commandName, img, data);
       return result;
     }

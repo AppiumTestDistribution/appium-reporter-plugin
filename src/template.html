@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+        <meta name="generator" content="Hugo 0.84.0">
+        <title>Dashboard Template · Bootstrap v5.0</title>
+
+        <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/dashboard/">
+        <!-- Bootstrap core CSS -->
+        <link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <meta name="theme-color" content="#7952b3">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <style>
+            /* .bd-placeholder-img {
+                font-size: 1.125rem;
+                text-anchor: middle;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                user-select: none;
+            } */
+
+            .bd-navbar {
+                background-color:darkslategrey;
+            }
+
+            .active {
+                background-color: rgb(193, 192, 192);
+            }
+
+            /* @media (min-width: 768px) {
+                .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+                }
+            } */
+        </style>
+        <script>  
+            function prep() {        
+                $('#commandLinks li a').first().click();
+                $('#commandLinks li a').first().addClass('active');
+            }; 
+            function setData(key, id) {   
+
+                $('ul.nav > li > a').click(
+                    function (e) {
+                        $('ul.nav > li > a').removeClass('active');
+                        $(this).addClass('active');
+                    });
+
+                const dataId = key + id;    
+                const cmdData = data[dataId];    
+                const header = $('#command');    
+                header.text(key);  
+                if(cmdData.img) {        
+                    $('#cmd-context').attr("src",cmdData.img);
+                }
+                const args = data[dataId]['args'];
+                const execTime = args['execution time'];
+                const sessionId = args['sessionId'];
+                const request = args['request'];
+                const response = args['response'];
+                $('#metadata').text('');
+                if(execTime) 
+                    $('#metadata').append(`<tr><th>Time Taken</th><td>${execTime}</td></tr>`);
+                if(sessionId) 
+                    $('#metadata').append(`<tr><th>Session Id</th><td>${sessionId}</td></tr>`);                    
+                $('#otherInfo').text('');
+                if(request)
+                    $('#otherInfo').append(`<h4 class='h4' style='padding-top: 20px; padding-bottom: 20px;'> Request </h4><Pre class='bg-light'>${JSON.stringify(request, undefined, 2)} </Pre>`);
+                if(response)
+                    $('#otherInfo').append(`<h4 class='h4' style='padding-top: 20px; padding-bottom: 20px;'> Response </h4><Pre class='bg-light'>${JSON.stringify(response, undefined, 2)} </Pre>`);        
+            }  
+            function goFullscreen(element) {    
+                if (element.mozRequestFullScreen) {        
+                    element.mozRequestFullScreen();    
+                } else if (element.webkitRequestFullScreen) {        
+                    element.webkitRequestFullScreen();    
+                }  
+            }  
+        </script>
+    </head>
+    <body onload="prep()">
+        <header class="navbar navbar-dark sticky-top bd-navbar shadow">
+            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" id="testname" href="#">Test Name</a>
+        </header>
+        <div id="data">
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                    <div class="position-sticky pt-3">
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                            <span>Commands</span>
+                        </h6>
+                        <ul class="nav flex-column" id="commandLinks">
+                        </ul>
+                    </div>
+                </nav>
+
+                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h4 class="h5" id="command">Command</h4>
+                    </div>
+                    <div class="row">
+                        <img id='cmd-context' class='border border-secondary col-md-4 img-responsive' alt='No Image' onclick='goFullscreen(this)' src='' />  
+                        <div class="col-md-1"> </div>
+                        <div class="col-md-4">
+                            <div class="table-responsive">
+                                <table class="table">
+                                <thead>
+                                    <tr>
+                                    <th scope="col">Key</th>
+                                    <th scope="col">Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="metadata">
+                                </tbody>
+                                </table>
+                            </div>
+                            <div id="otherInfo">
+
+                            </div>
+                        </div>    
+                    </div>
+                </main>
+            </div>
+        </div>
+  </body>
+</html>

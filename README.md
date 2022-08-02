@@ -20,7 +20,7 @@
 `npm run test`
 
 ### Sample Report
-![Sample Report](https://github.com/AppiumTestDistribution/appium-server-reporter/tree/main/images/Report.png)
+![Sample Report](https://github.com/AppiumTestDistribution/appium-server-reporter/blob/main/images/Report.png)
 
 
 ToDo

@@ -12,11 +12,22 @@ describe('Plugin Test', () => {
       capabilities: androidCapabilities,
     });
 
-    driver.addCommand('getReport', async function (sessionId) {
+    driver.addCommand('getReport', async function (sessionId, testName, testStatus) {
       const url = `http://localhost:4723/session/${sessionId}/getReport`;
-      const response = await fetch(url);
+      const reqBody = {};
+      reqBody.testName = testName;
+      reqBody.testStatus = testStatus;
+      const response = await fetch(url, {
+        method: 'post',
+        body: JSON.stringify(reqBody),
+        headers: { 'Content-Type': 'application/json' },
+      });
       const data = await response.json();
       const value = await data.value;
+      // eslint-disable-next-line no-prototype-builtins
+      if (value.hasOwnProperty('error')) {
+        throw value;
+      }
       return value;
     });
   });
@@ -27,7 +38,7 @@ describe('Plugin Test', () => {
     });
   }
 
-  it('Sample test', async () => {
+  it('Fill credentials test', async () => {
     await driver.url('https://practicetestautomation.com/practice-test-login/');
     const uelement = await driver.$('#username');
     await uelement.setValue('test123');
@@ -36,7 +47,7 @@ describe('Plugin Test', () => {
   });
 
   afterEach(async () => {
-    const data = await driver.getReport(driver.sessionId);
+    const data = await driver.getReport(driver.sessionId, 'Fill credentials test', 'Pass');
     await createReportFile(driver.sessionId, data);
     await driver.deleteSession();
   });

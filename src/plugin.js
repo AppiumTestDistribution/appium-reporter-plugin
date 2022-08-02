@@ -16,15 +16,15 @@ export class ReportPlugin extends BasePlugin {
   // this plugin supports a non-standard 'get report' command
   static newMethodMap = {
     '/session/:sessionId/getReport': {
-      GET: {
+      POST: {
         command: 'getReport',
-        neverProxy: true,
+        payloadParams: { optional: ['testName', 'testStatus'] },
       },
     },
   };
 
-  async getReport(_next, driver) {
-    return await Reporter.buildReport(driver.sessionId);
+  async getReport(_next, driver, ...args) {
+    return await Reporter.buildReport(driver.sessionId, ...args);
   }
 
   async handle(next, driver, commandName, ...args) {

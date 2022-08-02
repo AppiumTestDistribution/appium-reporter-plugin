@@ -23,11 +23,22 @@ describe('Plugin Test', () => {
   beforeEach(async () => {
     driver = await remote({ ...WDIO_PARAMS, capabilities });
 
-    driver.addCommand('getReport', async function (sessionId) {
+    driver.addCommand('getReport', async function (sessionId, testName, testStatus) {
       const url = `http://localhost:4723/session/${sessionId}/getReport`;
-      const response = await fetch(url);
+      const reqBody = {};
+      reqBody.testName = testName;
+      reqBody.testStatus = testStatus;
+      const response = await fetch(url, {
+        method: 'post',
+        body: JSON.stringify(reqBody),
+        headers: { 'Content-Type': 'application/json' },
+      });
       const data = await response.json();
       const value = await data.value;
+      // eslint-disable-next-line no-prototype-builtins
+      if (value.hasOwnProperty('error')) {
+        throw value;
+      }
       return value;
     });
   });

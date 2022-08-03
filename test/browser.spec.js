@@ -1,54 +1,66 @@
 import { remote } from 'webdriverio';
-import { WDIO_PARAMS, androidCapabilities } from './wdio.config';
-import fetch from 'node-fetch';
-import fs from 'fs';
+import { WDIO_PARAMS, androidBrowserCapabilities } from './wdio.config';
+import { getReport, createReportFile } from './base';
 
 let driver;
 
-describe('Plugin Test', () => {
-  beforeEach(async () => {
+describe('Server Report Plugin Test', () => {
+
+  beforeEach(async function () {
     driver = await remote({
       ...WDIO_PARAMS,
-      capabilities: androidCapabilities,
+      capabilities: androidBrowserCapabilities,
     });
 
-    driver.addCommand('getReport', async function (sessionId, testName, testStatus) {
-      const url = `http://localhost:4723/session/${sessionId}/getReport`;
-      const reqBody = {};
-      reqBody.testName = testName;
-      reqBody.testStatus = testStatus;
-      const response = await fetch(url, {
-        method: 'post',
-        body: JSON.stringify(reqBody),
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const data = await response.json();
-      const value = await data.value;
-      // eslint-disable-next-line no-prototype-builtins
-      if (value.hasOwnProperty('error')) {
-        throw value;
+    driver.addCommand('getReport', (sessionId, testName, testStatus, error) =>
+      getReport(sessionId, testName, testStatus, error)
+    );
+  });
+
+  describe('Tests which has test status', async function () {
+    it('A PASSing test should generate a good report', async function () {
+      await driver.url('https://practicetestautomation.com/practice-test-login/');
+      const uelement = await driver.$('#username');
+      await uelement.setValue('test123');
+      const pelement = await driver.$('#password');
+      await pelement.setValue('test123');
+    });
+
+    it('A FAILing test should generate a good report too', async function () {
+      await driver.url('https://practicetestautomation.com/practice-test-login/');
+      const uelement = await driver.$('#username');
+      await uelement.setValue('test123');
+      const pelement = await driver.$('#passwordw');
+      await pelement.setValue('test123');
+    });
+
+    afterEach(async function () {
+      const title = this.currentTest.title;
+      const state = this.currentTest.state;
+      let error = '';
+      if (this.currentTest.hasOwnProperty('err')) {
+        error = this.currentTest.err.stack;
       }
-      return value;
+
+      const data = await driver.getReport(driver.sessionId, title, state, error);
+      await createReportFile(driver.sessionId, data);
+      await driver.deleteSession();
     });
   });
 
-  async function createReportFile(sessionID, data) {
-    fs.writeFile(`${__dirname}/../appium-reports/${sessionID}.html`, data, 'utf-8', (err) => {
-      if (err) throw err;
+  describe('Test which doesnt has test status', async function() {
+    it('A FAILing test should generate a good report too', async function () {
+      await driver.url('https://practicetestautomation.com/practice-test-login/');
+      const uelement = await driver.$('#username');
+      await uelement.setValue('test123');
+      const pelement = await driver.$('#password');
+      await pelement.setValue('test123');
     });
-  }
 
-  it('Fill credentials test', async () => {
-    await driver.url('https://practicetestautomation.com/practice-test-login/');
-    const uelement = await driver.$('#username');
-    await uelement.setValue('test123');
-    const pelement = await driver.$('#password');
-    await pelement.setValue('test123');
-  });
-
-  afterEach(async () => {
-    const data = await driver.getReport(driver.sessionId, 'Fill credentials test', 'Pass');
-    await createReportFile(driver.sessionId, data);
-    await driver.deleteSession();
+    afterEach(async function () {
+      const data = await driver.getReport(driver.sessionId);
+      await createReportFile(driver.sessionId, data);
+      await driver.deleteSession();
+    });
   });
 });

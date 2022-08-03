@@ -1,7 +1,6 @@
 import BasePlugin from '@appium/base-plugin';
 import sharp from 'sharp';
 import Reporter from './reporter';
-const { v4: uuidv4 } = require('uuid');
 const prettyHrtime = require('pretty-hrtime');
 
 export class ReportPlugin extends BasePlugin {
@@ -18,7 +17,7 @@ export class ReportPlugin extends BasePlugin {
     '/session/:sessionId/getReport': {
       POST: {
         command: 'getReport',
-        payloadParams: { optional: ['testName', 'testStatus'] },
+        payloadParams: { optional: ['testName', 'testStatus', 'error'] },
       },
     },
   };
@@ -54,14 +53,14 @@ export class ReportPlugin extends BasePlugin {
           return null;
         });
       img = `data:image/jpeg;base64, ${img}`;
-      const cmdId = await uuidv4();
+
       const end = process.hrtime(start);
       const time = prettyHrtime(end);
       const data = { 'execution time': time };
       data['sessionId'] = driver.sessionId;
       if (result) data['response'] = result;
       if (args) data['request'] = args;
-      await Reporter.updateJsonValue(driver.sessionId, cmdId, commandName, img, data);
+      await Reporter.updateJsonValue(driver.sessionId, commandName, img, data);
       return result;
     }
     return await next();

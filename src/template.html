@@ -27,8 +27,27 @@
                 $('#commandLinks li a').first().click();
                 $('#commandLinks li a').first().addClass('active');
             }; 
-            function setData(key, id) {   
+            function setTestStatus(title, status, error) {
+                $('#context').addClass('d-none');  
+                const header = $('#command');    
+                header.text('Test Results');  
 
+                const testResult = $('#testDetails');
+                if(!testResult.children().length ) {
+                    let element = `<h4 class='h4' style='padding-top: 20px; padding-bottom: 20px;'> Test Title </h4><Pre class='h5 bg-light'> ${atob(title)} </Pre>`
+                    testResult.append(element);
+                
+                    element = `<h4 class='h4' style='padding-top: 20px; padding-bottom: 20px;'> Test Status </h4><Pre class='h5 bg-light'> ${atob(status)} </Pre>`
+                    testResult.append(element);
+
+                    if( error !== undefined && atob(error) !== 'undefined' && error !== '') {
+                        element = `<h4 class='h4' style='padding-top: 20px; padding-bottom: 20px;'> Error </h4><Pre class='h5 bg-light'> ${atob(error)} </Pre>`
+                        testResult.append(element);
+                    }
+                }
+            };
+            function setData(key, id) {   
+                $('#context').removeClass('d-none');
                 $('ul.nav > li > a').click(
                     function (e) {
                         $('ul.nav > li > a').removeClass('active');
@@ -75,26 +94,31 @@
         </div>
         <div class="container-fluid">
             <div class="row">
-                <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-                    <div class="position-sticky pt-3">
+                <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                    <div class="position-sticky pt-3" id="sidebarMenu">
                         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                             <span>Commands</span>
                         </h6>
                         <ul class="nav flex-column" id="commandLinks">
+                        </ul>
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                            <span>Test Status</span>
+                        </h6>    
+                        <ul class="nav flex-column" id="testStatus"> 
                         </ul>
                     </div>
                 </nav>
 
                 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h4 class="h5" id="command">Command</h4>
+                        <h4 class="h5" id="command"></h4>
                     </div>
-                    <div class="row">
+                    <div class="row" id="context">
                         <img id='cmd-context' class='border border-secondary col-md-4 img-responsive' alt='No Image' onclick='goFullscreen(this)' src='' />  
                         <div class="col-md-1"> </div>
                         <div class="col-md-4">
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table" id="table">
                                 <thead>
                                     <tr>
                                     <th scope="col">Key</th>
@@ -109,6 +133,8 @@
 
                             </div>
                         </div>    
+                    </div>
+                    <div id="testDetails">
                     </div>
                 </main>
             </div>

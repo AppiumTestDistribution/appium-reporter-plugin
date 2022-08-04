@@ -1,19 +1,19 @@
 {
-  "name": "appium-server-reporter",
+  "name": "appium-reporter-plugin",
   "version": "0.0.0-beta.1",
   "description": "Appium 2.0 plugin for generating html report with screenshots server side.",
   "main": "./lib/index.js",
   "scripts": {
     "build": "npx tsc && cp ./src/template.html ./lib/template.html",
     "install-plugin": "npm run build && appium plugin install --source=local $(pwd)",
-    "reinstall-plugin": "(appium plugin uninstall appium-server-reporter || exit 0) && npm run install-plugin",
+    "reinstall-plugin": "(appium plugin uninstall appium-reporter-plugin || exit 0) && npm run install-plugin",
     "test": "mocha --require ts-node/register ./test/browser.spec.js --timeout 260000",
     "lint": "npx eslint . --fix",
     "prettier": "npx prettier 'src/**/*.js' --write --single-quote"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AppiumTestDistribution/appium-server-reporter.git"
+    "url": "git+https://github.com/AppiumTestDistribution/appium-reporter-plugin.git"
   },
   "keywords": [
     "appium2",
@@ -23,9 +23,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/AppiumTestDistribution/appium-server-reporter/issues"
+    "url": "https://github.com/AppiumTestDistribution/appium-reporter-plugin/issues"
   },
-  "homepage": "https://github.com/AppiumTestDistribution/appium-server-reporter#readme",
+  "homepage": "https://github.com/AppiumTestDistribution/appium-reporter-plugin#readme",
   "dependencies": {
     "@appium/base-plugin": "^1.10.1",
     "edit-json-file": "^1.7.0",
@@ -40,7 +40,7 @@
     "jpeg-js": "^0.4.4"
   },
   "appium": {
-    "pluginName": "appium-server-reporter",
+    "pluginName": "appium-reporter-plugin",
     "mainClass": "ReportPlugin"
   },
   "devDependencies": {

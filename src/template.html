@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
     <head>
@@ -6,10 +7,10 @@
         <meta name="description" content="">
         <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
         <meta name="generator" content="Hugo 0.84.0">
-        <title>Dashboard Template · Bootstrap v5.0</title>
+        <title>Test Execution Dashboard</title>
 
         <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/dashboard/">
-        <!-- Bootstrap core CSS -->
+        
         <link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <meta name="theme-color" content="#7952b3">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -22,48 +23,61 @@
                 background-color: rgb(193, 192, 192);
             }
         </style>
-        <script>  
-            function prep() {        
-                $('#commandLinks li a').first().click();
-                $('#commandLinks li a').first().addClass('active');
-            }; 
-            function setTestStatus(title, status, error) {
-                $('#context').addClass('d-none');  
-                const header = $('#command');    
-                header.text('Test Results');  
-
-                const testResult = $('#testDetails');
-                if(!testResult.children().length ) {
-                    let element = `<h4 class='h4' style='padding-top: 20px; padding-bottom: 20px;'> Test Title </h4><Pre class='h5 bg-light'> ${atob(title)} </Pre>`
-                    testResult.append(element);
-                
-                    element = `<h4 class='h4' style='padding-top: 20px; padding-bottom: 20px;'> Test Status </h4><Pre class='h5 bg-light'> ${atob(status)} </Pre>`
-                    testResult.append(element);
-
-                    if( error !== undefined && atob(error) !== 'undefined' && error !== '') {
-                        element = `<h4 class='h4' style='padding-top: 20px; padding-bottom: 20px;'> Error </h4><Pre class='h5 bg-light'> ${atob(error)} </Pre>`
-                        testResult.append(element);
-                    }
-                }
-            };
-            function setData(key, id) {   
-                $('#context').removeClass('d-none');
-                $('ul.nav > li > a').click(
+        <script>
+            function prep() {    
+                $('#testNav a').first().click();
+                $('#testNav a').first().addClass('active');
+                $("#cmdNav").addClass('visually-hidden');   
+                $('#testNav ul.nav > li > a').click(
                     function (e) {
-                        $('ul.nav > li > a').removeClass('active');
+                        $('#testNav a').removeClass('active');
                         $(this).addClass('active');
-                    });
+                }); 
+            };
 
+            function setAllStatus(){
+                $("#cmdNav").addClass('visually-hidden');    
+            };
+
+            function setTestCmdLinks(sessionId) {
+                $("#cmdNav").removeClass('visually-hidden');   
+                console.log('after clicking in status test status');
+                let session = data['sesssionData'][sessionId];
+                let cmdLinks = '';
+                session.cmd.forEach((cmd) => {
+                    cmdLinks = `${cmdLinks} 
+                    <li  class="nav-item" >
+                        <a href='#' class='nav-link' onclick=setData('${sessionId}','${cmd[0]}','${cmd[1]}')>${cmd[0]}</a>
+                    </li>`
+                });
+                $('#commandLinks').html(cmdLinks);
+
+                const testInfo = `<li  class="nav-item" >
+                    <a href="#" class="nav-link" onclick="setTestStatus('${sessionId}')">Status</a>
+                </li>`
+                $('#testStatus').html(testInfo);
+                $('#cmdNav li a').first().addClass('active');
+                $('#cmdNav li a').first().click();
+                $('#cmdNav ul.nav > li > a').click(
+                    function (e) {
+                        console.log('inside cmdNav click');
+                        $('#cmdNav a').removeClass('active');
+                        $(this).addClass('active');
+                });  
+            }; 
+
+            function setData(sessionId, key, id) {   
+                $("#cmdNav").removeClass('visually-hidden');    
+                $('#context').removeClass('d-none');
                 const dataId = key + id;    
-                const cmdData = data[dataId];    
+                const cmdData = data['sesssionData'][sessionId]['data'][dataId];    
                 const header = $('#command');    
                 header.text(key);  
                 if(cmdData.img) {        
                     $('#cmd-context').attr("src",cmdData.img);
                 }
-                const args = data[dataId]['args'];
+                const args = cmdData['args'];
                 const execTime = args['execution time'];
-                const sessionId = args['sessionId'];
                 const request = args['request'];
                 const response = args['response'];
                 $('#metadata').text('');
@@ -77,6 +91,29 @@
                 if(response)
                     $('#otherInfo').append(`<h4 class='h4' style='padding-top: 20px; padding-bottom: 20px;'> Response </h4><Pre class='bg-light'>${JSON.stringify(response, undefined, 2)} </Pre>`);        
             }  
+            
+            function setTestStatus(sessionId) {
+                $('#context').addClass('d-none');  
+                const header = $('#command');    
+                header.text('Test Results');  
+                const testInfo = data['testInfo'][sessionId];
+                const testName = atob(testInfo['testName']);
+                const testState = atob(testInfo['testStatus']);
+
+                const testResult = $('#testDetails');
+                testResult.empty();
+                let element = `<h4 class='h4' style='padding-top: 20px; padding-bottom: 20px;'> Test Title </h4><Pre class='h5 bg-light'> ${testName} </Pre>`
+                testResult.append(element);
+            
+                element = `<h4 class='h4' style='padding-top: 20px; padding-bottom: 20px;'> Test Status </h4><Pre class='h5 bg-light'> ${testState} </Pre>`
+                testResult.append(element);
+
+                if( testInfo.error !== undefined && atob(testInfo.error) !== 'undefined' && testInfo.error !== '') {
+                    element = `<h4 class='h4' style='padding-top: 20px; padding-bottom: 20px;'> Error </h4><Pre class='h5 bg-light'> ${atob(testInfo.error)} </Pre>`
+                    testResult.append(element);
+                }
+            };
+        
             function goFullscreen(element) {    
                 if (element.mozRequestFullScreen) {        
                     element.mozRequestFullScreen();    
@@ -88,35 +125,52 @@
     </head>
     <body onload="prep()">
         <header class="navbar navbar-dark sticky-top bd-navbar shadow" id="header">
-            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" id="testname" href="#"></a>
+            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" id="testname" href="#">Test Execution Report</a>
         </header>
         <div id="data">
         </div>
         <div class="container-fluid">
             <div class="row">
-                <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-                    <div class="position-sticky pt-3" id="sidebarMenu">
-                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                            <span>Commands</span>
-                        </h6>
-                        <ul class="nav flex-column" id="commandLinks">
+                <nav class="col-md-2 d-md-block sidebar bg-light border-end" id="testNav">
+                    <div class="position-sticky" id="sidebarMenu">
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 text-muted">
+                            <span> Execution Summary</span>
+                        </h6>    
+                        <ul class="nav flex-column" id="overAllExecutionSummay">
+                            <li  class="nav-item" >
+                                <a href="#" class="nav-link" onclick="setAllStatus()">Summary</a>
+                            </li>
                         </ul>
-                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 text-muted">
+                            <span>Tests</span>
+                        </h6>
+                        <ul class="nav flex-column" id="testLinks"> 
+                        </ul>
+
+                    </div>
+                </nav>
+                <nav class="col-md-2 d-md-block sidebar bg-light " id="cmdNav">
+                    <div class="position-sticky pt-3" id="sidebarMenu">
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 text-muted">
                             <span>Test Status</span>
                         </h6>    
-                        <ul class="nav flex-column" id="testStatus"> 
+                        <ul class="nav flex-column" id="testStatus">
+
+                        </ul>
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 text-muted">
+                            <span>Commands</span>
+                        </h6>
+                        <ul class="nav flex-column" id="commandLinks"> 
                         </ul>
                     </div>
                 </nav>
-
-                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <main class="col-md-6  px-md-5">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h4 class="h5" id="command"></h4>
                     </div>
                     <div class="row" id="context">
-                        <img id='cmd-context' class='border border-secondary col-md-4 img-responsive' alt='No Image' onclick='goFullscreen(this)' src='' />  
-                        <div class="col-md-1"> </div>
-                        <div class="col-md-4">
+                        <img id='cmd-context' class='border border-secondary col-md-6 img-responsive' alt='No Image' onclick='goFullscreen(this)' src='' >  
+                        <div class="col-md-6">
                             <div class="table-responsive">
                                 <table class="table" id="table">
                                 <thead>

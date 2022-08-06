@@ -35,8 +35,10 @@
                 }); 
             };
 
-            function setAllStatus(){
+            function overAllExecutionSummay(){
                 $("#cmdNav").addClass('visually-hidden');    
+                $("#context").addClass('visually-hidden');
+                $('#testDetails').empty();
             };
 
             function setTestCmdLinks(sessionId) {
@@ -67,8 +69,9 @@
             }; 
 
             function setData(sessionId, key, id) {   
+                $("#context").removeClass('visually-hidden');
+                $('#testDetails').empty();
                 $("#cmdNav").removeClass('visually-hidden');    
-                $('#context').removeClass('d-none');
                 const dataId = key + id;    
                 const cmdData = data['sesssionData'][sessionId]['data'][dataId];    
                 const header = $('#command');    
@@ -80,7 +83,7 @@
                 const execTime = args['execution time'];
                 const request = args['request'];
                 const response = args['response'];
-                $('#metadata').text('');
+                $('#metadata').empty();
                 if(execTime) 
                     $('#metadata').append(`<tr><th>Time Taken</th><td>${execTime}</td></tr>`);
                 if(sessionId) 
@@ -93,7 +96,7 @@
             }  
             
             function setTestStatus(sessionId) {
-                $('#context').addClass('d-none');  
+                $('#context').addClass('visually-hidden');  
                 const header = $('#command');    
                 header.text('Test Results');  
                 const testInfo = data['testInfo'][sessionId];
@@ -138,7 +141,7 @@
                         </h6>    
                         <ul class="nav flex-column" id="overAllExecutionSummay">
                             <li  class="nav-item" >
-                                <a href="#" class="nav-link" onclick="setAllStatus()">Summary</a>
+                                <a href="#" class="nav-link" onclick="overAllExecutionSummay()">Summary</a>
                             </li>
                         </ul>
                         <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 text-muted">

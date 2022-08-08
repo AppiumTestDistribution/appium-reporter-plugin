@@ -55,7 +55,9 @@ Sample implementation can be found in tests. `test/browser.spec.js`
 `npm run test`
 
 ### Sample Report
-![Sample Report](https://github.com/AppiumTestDistribution/appium-reporter-plugin/blob/main/images/Report.png)
+https://user-images.githubusercontent.com/2680841/183408319-cf7a550d-2b74-4732-8a13-e80c57524467.mov
+
+
 
 
 ToDo

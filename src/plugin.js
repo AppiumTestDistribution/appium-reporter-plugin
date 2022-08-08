@@ -25,7 +25,8 @@ export class ReportPlugin extends BasePlugin {
       POST: {
         command: 'setTestInfo',
         payloadParams: {
-          optional: ['testName', 'testStatus', 'error'],
+          required: ['testName', 'testStatus'],
+          optional: ['error'],
         },
       },
     },
@@ -41,7 +42,7 @@ export class ReportPlugin extends BasePlugin {
   }
 
   async setTestInfo(next, driver, ...args) {
-    return await Reporter.setTestInfo(...args);
+    return await Reporter.setTestInfo(driver.sessionId, ...args);
   }
 
   async createSession(next) {

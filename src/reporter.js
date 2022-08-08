@@ -2,6 +2,7 @@ const fs = require('fs');
 const editJsonFile = require('edit-json-file');
 import { parse } from 'node-html-parser';
 const { v4: uuidv4 } = require('uuid');
+const testStatusValues = ['PASSED', 'FAILED'];
 
 async function initReport(sessionID) {
   let file = editJsonFile(`${__dirname}/report.json`);
@@ -9,11 +10,14 @@ async function initReport(sessionID) {
   file.save();
 }
 
-async function setTestInfo(testName, testStatus, error, sessionID) {
+async function setTestInfo(sessionID, testName, testStatus, error) {
   let file = editJsonFile(`${__dirname}/report.json`);
   const info = {};
+  if (!testStatusValues.includes(testStatus.toUpperCase()))
+    throw `Test status ${testStatus} is not valid state.`;
+
   info['testName'] = Buffer.from(testName, 'utf8').toString('base64');
-  info['testStatus'] = Buffer.from(testStatus, 'utf8').toString('base64');
+  info['testStatus'] = Buffer.from(testStatus.toUpperCase(), 'utf8').toString('base64');
   if (error) info['error'] = Buffer.from(error, 'utf8').toString('base64');
   file.set(`testInfo.${sessionID}`, info);
   file.save();
@@ -45,9 +49,17 @@ async function buildReport() {
   const sessions = file.get('sessions');
   let sessionLinks = '';
   sessions.forEach((sessionId) => {
+    const testName = Buffer.from(file.get(`testInfo.${sessionId}.testName`), 'base64').toString(
+      'utf8'
+    );
+    const testStatus = Buffer.from(file.get(`testInfo.${sessionId}.testStatus`), 'base64').toString(
+      'utf8'
+    );
     sessionLinks = `${sessionLinks} 
-    <li  class='nav-item'>
-      <a href='#' class='nav-link' onclick=setTestCmdLinks('${sessionId}')>${sessionId}</a>
+    <li  class='nav-item' state='${testStatus}'>
+      <a href='#' class='nav-link' onclick=setTestCmdLinks('${sessionId}')>
+        ${testName}
+      </a>
     </li>`;
   });
   dom.getElementById('testLinks').innerHTML = sessionLinks;

@@ -2,30 +2,36 @@
 
 
 ### Intro
-`appium-reporter-plugin` is appium 2.0 plugin, for generating simple html report with screenshots. Report is generated at server side and can be fetched from server and written to file (just like screenshots). To generate report and fetch the report at client side, server binding `session/:sessionId/getReport` is provided. 
+`appium-reporter-plugin` is appium 2.0 plugin, for generating simple html report with screenshots. Consolidated Report is generated for all the test that ran in the appium session. Report can be fetched from server and be written to file (just like screenshots).
 
-    
-    '/session/:sessionId/getReport': {
-      POST: {
-        command: 'getReport',
-        payloadParams: { 
-          optional: [ 
-                      'testName', 
-                      'testStatus', 
-                      'error'
-                    ] 
-          },
-      },
-    }
-  
-`getReport` returns a html report with screenshots as a string. It has to be written to a file at client side.   
+ Test name, test result & error should be mapped to driver session at the end of each test. For setting test info, below mapping is exposed
 
-If testName, testStatus and error are provided, they would be used to populated data in `Test Status` section. 
+    POST: /session/:sessionId/setTestInfo
+        payloadParams: {
+          required: ['testName', 'testStatus'],
+          optional: ['error'],
+        }
+
+After execution of all the tests, report can be downloaded from server. For this, below mapping is provided.
+      
+      GET: /getReport
+
+`getReport` returns a html report with screenshots as a string.  
+
+
+### setTestInfo
+Sample payload for `/session/:sessionId/setTestInfo` is as below
+
+ex: 
+```
+    {testName: 'Sum of 1 and 2 should be 3', testStatus: 'PASSED'}
+    {testName: 'Sum of 1 and 2 should be 4', testStatus: 'FAILED', error: 'Sum of 1 and 2 is 3'}
+```
 
 | Param       | Description                    | Type      | Accepted Values |
 | ----------- | -----------                    | ----      | --------------- |
-| testName    | Name of the test               | Optinal   | any string      |
-| testStatus  | Test execution status          | Optional  | Passed, Failed  |
+| testName    | Name of the test               | Mandatory | any string      |
+| testStatus  | Test execution status          | Mandatory | PASSED, FAILED|
 | error       | Reason for test Failure        | Optinal   | any string      |
 
 Note: `appium-reporter-plugin` doesn't gather test results data from any unit test framework. Params mentioned above should be provided to get test result information populated in report.
@@ -53,10 +59,15 @@ Sample implementation can be found in tests. `test/browser.spec.js`
 
 
 ToDo
+* explore event timing apis - to get the time taken for cmd execution
+* Add details such as - 
+    sessionId
+    overall timing of test
+    number of android and ios
+    device info of test run
+* expose the exclusion command list 
 * expose resize params as arguments 
 * githooks for lint and pretty
 * github pipelines
 * unit tests
 * add tests for ios
-
-PS: Delete once above are done. Order if items is not priority.

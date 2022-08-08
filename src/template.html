@@ -53,12 +53,10 @@
                     result = results[key];
                     const testName = atob(result.testName);
                     const status = atob(result.testStatus);
-                    if(status.toLowerCase() === 'passed') {
+                    if(status === 'PASSED') {
                         passCount = passCount + 1;
-                    } else if(status.toLowerCase() === 'failed') {
-                        failCount = failCount + 1;
                     } else {
-                        unknownCount = unknownCount + 1;
+                        failCount = failCount + 1;
                     }
                     resultElements = resultElements + `
                     <tr>
@@ -70,20 +68,18 @@
                 $('#overAllExecutionMetadata').html(resultElements);
 
                 const labels = [
-                    'Passed',
-                    'Failed',
-                    'Unknown',
+                    'PASSED',
+                    'FAILED',
                 ];
 
                 const chartData = {
                     labels: labels,
                     datasets: [{
                         label: 'Test Execution Result',
-                        data: [passCount, failCount, unknownCount],
+                        data: [passCount, failCount],
                         backgroundColor: [
+                        'rgb(46,139,87)',
                         'rgb(255, 99, 132)',
-                        'rgb(54, 162, 235)',
-                        'rgb(255, 205, 86)'
                         ],
                         hoverOffset: 4
                     }]
@@ -185,7 +181,25 @@
                     element.webkitRequestFullScreen();    
                 }  
             }  
-        </script>
+       
+            function filter(){
+              const filterSelected = $('#filter').val();
+              switch(filterSelected){
+                case "0":
+                    $('li[state="PASSED"]').removeClass('visually-hidden');
+                    $('li[state="FAILED"]').removeClass('visually-hidden');
+                    break;
+                case "1":
+                    $('li[state="PASSED"]').removeClass('visually-hidden');
+                    $('li[state="FAILED"]').addClass('visually-hidden');
+                    break;
+                case "2":
+                    $('li[state="FAILED"]').removeClass('visually-hidden');
+                    $('li[state="PASSED"]').addClass('visually-hidden');
+                    break;                   
+              };
+            }
+       </script>
     </head>
     <body onload="prep()">
         <header class="navbar navbar-dark sticky-top bd-navbar shadow" id="header">
@@ -207,6 +221,11 @@
                         </ul>
                         <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 text-muted">
                             <span>Tests</span>
+                            <select class="form-select form-select-sm"  style="width:auto;" onchange="filter()" id="filter">
+                                <option value="0" selected>All</option>
+                                <option value="1">Passed</option>
+                                <option value="2">Failed</option>
+                              </select>
                         </h6>
                         <ul class="nav flex-column" id="testLinks"> 
                         </ul>

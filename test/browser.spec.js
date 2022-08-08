@@ -10,10 +10,13 @@ describe('Server Report Plugin Test', () => {
       ...WDIO_PARAMS,
       capabilities: androidBrowserCapabilities,
     });
+
+    // custom command setTestInfo is added to driver object
     driver.addCommand('setTestInfo', async function (testName, testStatus, error) {
       await setTestInfo(this.sessionId, testName, testStatus, error);
     });
 
+    // custom command getReport is added to driver object
     driver.addCommand('getReport', async function () {
       return await getReport();
     });
@@ -35,6 +38,7 @@ describe('Server Report Plugin Test', () => {
     await pelement.setValue('abc1234');
   });
 
+  // test info is mapped to driver's sessionId.
   afterEach(async function () {
     const title = this.currentTest.title;
     const state = this.currentTest.state;
@@ -46,6 +50,7 @@ describe('Server Report Plugin Test', () => {
     await driver.deleteSession();
   });
 
+  // report is fetched and written to html file at the end of all tests.
   after(async function () {
     const report = await driver.getReport();
     await createReportFile(report);

@@ -1,1 +1,7 @@
 apps
+appium-reports
+test
+lib
+.eslintrc
+.vscode
+.github

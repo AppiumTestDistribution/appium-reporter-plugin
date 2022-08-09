@@ -1,6 +1,6 @@
 {
   "name": "appium-reporter-plugin",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "Appium 2.0 plugin for generating html report with screenshots server side.",
   "main": "./lib/index.js",
   "scripts": {
@@ -57,5 +57,8 @@
     "prettier": "^2.7.1",
     "ts-node": "^10.9.1",
     "webdriverio": "^7.20.7"
-  }
+  },
+  "files": [
+    "lib"
+  ]
 }

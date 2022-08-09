@@ -8,8 +8,8 @@
     "prepublish": "npx tsc && cp ./src/template.html ./lib/template.html",
     "install-plugin": "npm run build && appium plugin install --source=local $(pwd)",
     "reinstall-plugin": "(appium plugin uninstall appium-reporter-plugin || exit 0) && npm run install-plugin",
-    "test": "echo 'test'",
-    "test-e2e": "mocha --require ts-node/register ./test/browser.spec.js --timeout 260000",
+    "test": "mocha --require ts-node/register ./test/unit/*.spec.js --timeout 260000",
+    "test-e2e": "mocha --require ts-node/register ./test/e2e/browser.spec.js --timeout 260000",
     "lint": "npx eslint . --fix",
     "prettier": "npx prettier 'src/**/*.js' --write --single-quote"
   },
@@ -50,6 +50,7 @@
     "@babel/eslint-parser": "^7.5.4",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "chai": "^4.3.6",
+    "chai-as-promised": "^7.1.1",
     "eslint": "^8.21.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",

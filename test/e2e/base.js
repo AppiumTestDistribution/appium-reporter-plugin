@@ -27,7 +27,7 @@ export const getReport = async () => {
 
 // simple funciton to write contents to file
 export const createReportFile = async function (data) {
-  fs.writeFile(`${__dirname}/../appium-reports/newReport.html`, data, 'utf-8', (err) => {
+  fs.writeFile(`${__dirname}/../../appium-reports/newReport.html`, data, 'utf-8', (err) => {
     if (err) throw err;
   });
 };

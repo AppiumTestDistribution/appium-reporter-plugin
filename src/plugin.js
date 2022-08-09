@@ -2,6 +2,7 @@ import BasePlugin from '@appium/base-plugin';
 import sharp from 'sharp';
 import Reporter from './reporter';
 const prettyHrtime = require('pretty-hrtime');
+import log from './logger.js';
 
 export class ReportPlugin extends BasePlugin {
   // value should be in lowercase
@@ -15,7 +16,6 @@ export class ReportPlugin extends BasePlugin {
   ];
 
   constructor(pluginName) {
-    console.log(`In plugin cons = ${pluginName}`);
     super(pluginName);
   }
 
@@ -47,12 +47,14 @@ export class ReportPlugin extends BasePlugin {
 
   async createSession(next) {
     const result = await next();
-    if (!result.hasOwnProperty('err')) {
-      Reporter.initReport(result.value[0]);
-    } else {
-      console.log('Failed to get sessionId in report plugin');
-      console.log(JSON.stringify(result));
+    let sessionId;
+    try {
+      sessionId = result.value[0];
+    } catch {
+      log.err('Failed to extract sessionId from session Object.');
+      throw result;
     }
+    Reporter.initReport(sessionId);
     return result;
   }
 

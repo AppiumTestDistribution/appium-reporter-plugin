@@ -5,16 +5,23 @@ const { v4: uuidv4 } = require('uuid');
 const testStatusValues = ['PASSED', 'FAILED'];
 
 async function initReport(sessionID) {
-  let file = editJsonFile(`${__dirname}/report.json`);
-  file.append('sessions', sessionID);
-  file.save();
+  if (sessionID && sessionID.length > 0) {
+    let file = editJsonFile(`${__dirname}/report.json`);
+    file.append('sessions', sessionID);
+    file.save();
+  } else {
+    throw 'Report creation failed because of invalid session ID';
+  }
 }
 
 async function setTestInfo(sessionID, testName, testStatus, error) {
+  if (sessionID === undefined || testName === undefined || testStatus === undefined)
+    throw new Error('sessionID, testName, testStatus are mandatory arguments');
+
   let file = editJsonFile(`${__dirname}/report.json`);
   const info = {};
   if (!testStatusValues.includes(testStatus.toUpperCase()))
-    throw `Test status ${testStatus} is not valid state.`;
+    throw new Error(`Test status ${testStatus} is not valid state.`);
 
   info['testName'] = Buffer.from(testName, 'utf8').toString('base64');
   info['testStatus'] = Buffer.from(testStatus.toUpperCase(), 'utf8').toString('base64');

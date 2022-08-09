@@ -1,13 +1,14 @@
 {
   "name": "appium-reporter-plugin",
-  "version": "0.0.0-beta.1",
+  "version": "1.0.0-beta.1",
   "description": "Appium 2.0 plugin for generating html report with screenshots server side.",
   "main": "./lib/index.js",
   "scripts": {
     "build": "npx tsc && cp ./src/template.html ./lib/template.html",
     "install-plugin": "npm run build && appium plugin install --source=local $(pwd)",
     "reinstall-plugin": "(appium plugin uninstall appium-reporter-plugin || exit 0) && npm run install-plugin",
-    "test": "mocha --require ts-node/register ./test/browser.spec.js --timeout 260000",
+    "test": "echo 'test'",
+    "test-e2e": "mocha --require ts-node/register ./test/browser.spec.js --timeout 260000",
     "lint": "npx eslint . --fix",
     "prettier": "npx prettier 'src/**/*.js' --write --single-quote"
   },

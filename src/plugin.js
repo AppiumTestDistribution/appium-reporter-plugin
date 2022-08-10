@@ -37,7 +37,6 @@ export class ReportPlugin extends BasePlugin {
   }
 
   static async getReport(req, res) {
-    console.log('In get report');
     res.send(await Reporter.buildReport());
   }
 

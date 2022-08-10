@@ -9,6 +9,7 @@
     "install-plugin": "npm run build && appium plugin install --source=local $(pwd)",
     "reinstall-plugin": "(appium plugin uninstall appium-reporter-plugin || exit 0) && npm run install-plugin",
     "test": "mocha --require ts-node/register ./test/unit/*.spec.js --timeout 260000",
+    "e2e": "mocha --require ts-node/register ./test/integration/e2e.spec.js --timeout 260000",
     "test-e2e": "mocha --require ts-node/register ./test/e2e/browser.spec.js --timeout 260000",
     "lint": "npx eslint . --fix",
     "prettier": "npx prettier 'src/**/*.js' --write --single-quote"
@@ -29,7 +30,6 @@
   },
   "homepage": "https://github.com/AppiumTestDistribution/appium-reporter-plugin#readme",
   "dependencies": {
-    "@appium/base-plugin": "^1.10.1",
     "edit-json-file": "^1.7.0",
     "jpeg-js": "^0.4.4",
     "node-fetch": "^2.6.7",
@@ -37,6 +37,9 @@
     "pretty-hrtime": "^1.0.3",
     "sharp": "^0.30.7",
     "uuid": "^8.3.2"
+  },
+  "peerDependencies": {
+    "appium": "^2.0.0-beta.42"
   },
   "overrides": {
     "jpeg-js": "^0.4.4"
@@ -58,7 +61,7 @@
     "mocha": "^10.0.0",
     "prettier": "^2.7.1",
     "ts-node": "^10.9.1",
-    "webdriverio": "^7.20.7"
+    "webdriverio": "^7.20.9"
   },
   "files": [
     "lib"

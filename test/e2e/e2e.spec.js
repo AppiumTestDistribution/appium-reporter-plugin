@@ -93,21 +93,21 @@ describe('Plugin Test', function () {
     });
   });
 
-  describe('Validate the html generated from above spec', function () {
-    it('HTML File should exist', async function () {
-      const data = await fs.readFileSync(HTML_REPORT_FILE, 'utf8');
-      expect(data).to.be.not.null;
-    });
+  // describe('Validate the html generated from above spec', function () {
+  //   it('HTML File should exist', async function () {
+  //     const data = await fs.readFileSync(HTML_REPORT_FILE, 'utf8');
+  //     expect(data).to.be.not.null;
+  //   });
 
-    it('Report should have over all test execution details displayed', async function () {
-      const data = await fs.readFileSync(HTML_REPORT_FILE, 'utf8');
-      const dom = parse(data);
-      const chart = dom.getElementById('overAllExecutionStatusChart');
-      expect(chart).to.be.not.null;
-      const testLink = dom.querySelector('#testLinks > li > a');
-      expect(testLink).to.be.not.null;
-      const testSummary = dom.querySelector('#cmdNav.visually-hidden');
-      expect(testSummary).to.be.null;
-    });
-  });
+  //   it('Report should have over all test execution details displayed', async function () {
+  //     const data = await fs.readFileSync(HTML_REPORT_FILE, 'utf8');
+  //     const dom = parse(data);
+  //     const chart = dom.getElementById('overAllExecutionStatusChart');
+  //     expect(chart).to.be.not.null;
+  //     const testLink = dom.querySelector('#testLinks > li > a');
+  //     expect(testLink).to.be.not.null;
+  //     const testSummary = dom.querySelector('#cmdNav.visually-hidden');
+  //     expect(testSummary).to.be.null;
+  //   });
+  // });
 });

@@ -8,9 +8,9 @@
     "prepublish": "npx tsc && cp ./src/template.html ./lib/template.html",
     "install-plugin": "npm run build && appium plugin install --source=local $(pwd)",
     "reinstall-plugin": "(appium plugin uninstall appium-reporter-plugin || exit 0) && npm run install-plugin",
-    "test": "mocha --require ts-node/register ./test/unit/*.spec.js --timeout 260000",
-    "e2e": "mocha --require ts-node/register ./test/integration/e2e.spec.js --timeout 260000",
-    "test-e2e": "mocha --require ts-node/register ./test/e2e/browser.spec.js --timeout 260000",
+    "test": "npm run unit & npm run e2e",
+    "unit": "mocha --require ts-node/register ./test/unit/*.spec.js --timeout 260000",
+    "e2e": "mocha --require ts-node/register ./test/e2e/e2e.spec.js --timeout 260000",
     "lint": "npx eslint . --fix",
     "prettier": "npx prettier 'src/**/*.js' --write --single-quote"
   },

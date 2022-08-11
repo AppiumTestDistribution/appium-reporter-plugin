@@ -1,3 +1,4 @@
+local_appium_home
 node_modules
 lib
 *.html

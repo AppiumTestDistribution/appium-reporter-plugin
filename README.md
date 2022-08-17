@@ -1,26 +1,41 @@
 # appium-reporter-plugin
 
-
 ### Intro
 `appium-reporter-plugin` is appium 2.0 plugin, for generating simple html report with screenshots. Consolidated Report is generated for all the test that ran in the appium session. Report can be fetched from server and be written to file (just like screenshots).
 
- Test name, test result & error should be mapped to driver session at the end of each test. For setting test info, below mapping is exposed
+### When to use
+`appium-reporter-plugin` would be handly, if you need to 
+* Take screenshot at every step of your test (not just at test failure / end)
+* Generate a simple standalone html report with screenshots
 
-    POST: /session/:sessionId/setTestInfo
-        payloadParams: {
-          required: ['testName', 'testStatus'],
-          optional: ['error'],
-        }
+### Sample Report Demo
+https://user-images.githubusercontent.com/2680841/183408319-cf7a550d-2b74-4732-8a13-e80c57524467.mov
+ 
+### How to use
 
-After execution of all the tests, report can be downloaded from server. For this, below mapping is provided.
-      
-      GET: /getReport
+To install plugin 
 
-`getReport` returns a html report with screenshots as a string.  
+```appium plugin install --source=npm appium-reporter-plugin```
+
+Start appium server with plugin
+
+```appium --use-plugins=appium-reporter-plugin```
 
 
-### setTestInfo
-Sample payload for `/session/:sessionId/setTestInfo` is as below
+Sample implementation can be found in `test/e2e/e2e.spec.js` and  `test/e2e/base.js`
+
+### Mappings / Commands
+
+`appium-reporter-plugin` assumes every test/spec uses new driver session. For commands invoked on the driver session, screenshot and metrics are captured at server side. At the end of the test i.e., before deleting the driver session, `driver.setTestInfo(..)` should be called to map test information. After all the tests are completed `driver.getReport()` can be called to fetch the html report and written to file. 
+
+#### setTestInfo
+For mapping test information to data collected, server binding `POST: /session/:sessionId/setTestInfo` is exposed. This binding accepts JSON payload with keys as mentioned below
+
+| key         | Description                    | Type      | Accepted Values |
+| ----------- | -----------                    | ----      | --------------- |
+| testName    | Name of the test               | Mandatory | any string      |
+| testStatus  | Test execution status          | Mandatory | PASSED, FAILED  |
+| error       | Reason for test Failure        | Optinal   | any string      |
 
 ex: 
 ```
@@ -28,48 +43,45 @@ ex:
     {testName: 'Sum of 1 and 2 should be 4', testStatus: 'FAILED', error: 'Sum of 1 and 2 is 3'}
 ```
 
-| Param       | Description                    | Type      | Accepted Values |
-| ----------- | -----------                    | ----      | --------------- |
-| testName    | Name of the test               | Mandatory | any string      |
-| testStatus  | Test execution status          | Mandatory | PASSED, FAILED|
-| error       | Reason for test Failure        | Optinal   | any string      |
+#### getReport
 
-Note: `appium-reporter-plugin` doesn't gather test results data from any unit test framework. Params mentioned above should be provided to get test result information populated in report.
+After execution of all the tests, report can be downloaded from server using `GET: /getReport`. `getReport` returns a html report with screenshots as a string.  
 
-Sample implementation can be found in tests. `test/browser.spec.js`
 
+Note: 
+1. `appium-reporter-plugin` doesn't gather test results data from any unit test framework. 
+2. Bindings exposed by this plugin are not default W3C binding, hence these commands cant be drirecly called on driver object. Either wdio setCommand should be used or direct api call can be made.
+  
 
 ### Build 
 `npm run build`
 
- ### Install 
+ ### Install from code base
  `npm run install-plugin`
 
-### Re-Install 
+### Re-Install from code base
  `npm run reinstall-plugin`
   
 ### Start appium server with plugin
-`appium  --allow-insecure chromedriver_autodownload --use-plugins=appium-reporter-plugin`
+`appium --use-plugins=appium-reporter-plugin`
 
 ### Run tests
 `npm run test`
 
-### Sample Report
-https://user-images.githubusercontent.com/2680841/183408319-cf7a550d-2b74-4732-8a13-e80c57524467.mov
+
 
 
 
 
 ToDo
-* explore event timing apis - to get the time taken for cmd execution
+* explore event timing apis
 * Add details such as - 
     sessionId
     overall timing of test
     number of android and ios
     device info of test run
 * expose the exclusion command list 
-* expose resize params as arguments 
+* expose screenshot resize params as arguments 
 * githooks for lint and pretty
 * github pipelines
-* unit tests
 * add tests for ios

@@ -3,18 +3,9 @@ import sharp from 'sharp';
 import Reporter from './reporter';
 const prettyHrtime = require('pretty-hrtime');
 import log from './logger.js';
+import { cmdExclusionList } from './constants';
 
 export class ReportPlugin extends BasePlugin {
-  // value should be in lowercase
-  cmdExclusionList = [
-    'createsession',
-    'deletesession',
-    'title',
-    'screenshot',
-    'status',
-    'getreport',
-  ];
-
   constructor(pluginName) {
     super(pluginName);
   }
@@ -58,7 +49,7 @@ export class ReportPlugin extends BasePlugin {
   }
 
   async handle(next, driver, commandName, ...args) {
-    if (!this.cmdExclusionList.includes(commandName.toLowerCase())) {
+    if (!cmdExclusionList.includes(commandName.toLowerCase())) {
       const start = process.hrtime();
       const result = await next();
       const end = process.hrtime(start);

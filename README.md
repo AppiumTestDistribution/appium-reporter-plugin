@@ -57,7 +57,12 @@ Note:
 `npm run build`
 
  ### Install from code base
- `npm run install-plugin`
+ ```
+ 1. set APPIUM_HOME to a local directory
+ ex: export APPIUM_HOME=~/Documents/AppiumTestDistribution/appium-reporter-plugin/local_appium_home
+ 
+ 2. npm run install-plugin
+ ```
 
 ### Re-Install from code base
  `npm run reinstall-plugin`

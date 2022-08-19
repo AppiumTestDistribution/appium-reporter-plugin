@@ -2,11 +2,11 @@ const fs = require('fs');
 const editJsonFile = require('edit-json-file');
 import { parse } from 'node-html-parser';
 const { v4: uuidv4 } = require('uuid');
-const testStatusValues = ['PASSED', 'FAILED'];
+import { htmlTemplatePath, jsonReportPath, testStatusValues } from './constants';
 
 async function initReport(sessionID) {
   if (sessionID && sessionID.length > 0) {
-    let file = editJsonFile(`${__dirname}/report.json`);
+    let file = editJsonFile(jsonReportPath);
     file.append('sessions', sessionID);
     file.save();
   } else {
@@ -18,7 +18,7 @@ async function setTestInfo(sessionID, testName, testStatus, error) {
   if (sessionID === undefined || testName === undefined || testStatus === undefined)
     throw new Error('sessionID, testName, testStatus are mandatory arguments');
 
-  let file = editJsonFile(`${__dirname}/report.json`);
+  let file = editJsonFile(jsonReportPath);
   const info = {};
   if (!testStatusValues.includes(testStatus.toUpperCase()))
     throw new Error(`Test status ${testStatus} is not valid state.`);
@@ -31,7 +31,7 @@ async function setTestInfo(sessionID, testName, testStatus, error) {
 }
 
 async function setCmdData(sessionID, key, value, args) {
-  let file = editJsonFile(`${__dirname}/report.json`);
+  let file = editJsonFile(jsonReportPath);
   const cmdId = await uuidv4();
   file.set(`sesssionData.${sessionID}.data.${key + cmdId}.img`, `${value}`);
   file.set(`sesssionData.${sessionID}.data.${key + cmdId}.args`, args);
@@ -40,8 +40,8 @@ async function setCmdData(sessionID, key, value, args) {
 }
 
 async function buildReport() {
-  let file = editJsonFile(`${__dirname}/report.json`);
-  const data = await fs.readFileSync(`${__dirname}/template.html`, 'utf8');
+  let file = editJsonFile(jsonReportPath);
+  const data = await fs.readFileSync(htmlTemplatePath, 'utf8');
   let dom = await parse(data);
 
   // set all data variable

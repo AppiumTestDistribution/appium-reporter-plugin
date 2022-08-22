@@ -22,7 +22,7 @@ Start appium server with plugin
 ```appium --use-plugins=appium-reporter-plugin```
 
 
-Sample implementation can be found in `test/e2e/e2e.spec.js` and  `test/e2e/base.js`
+Sample implementation can be found in `test/demo/demo.spec.js` and  `test/demo/base.js`
 
 ### Mappings / Commands
 

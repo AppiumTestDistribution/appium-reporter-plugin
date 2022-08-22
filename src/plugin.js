@@ -37,14 +37,27 @@ export class ReportPlugin extends BasePlugin {
 
   async createSession(next) {
     const result = await next();
+    const deviceDetails = {};
     let sessionId;
     try {
       sessionId = result.value[0];
+      const caps = result.value[1];
+      deviceDetails['platformName'] = caps.platformName ?? undefined;
+      deviceDetails['deviceModel'] = caps.deviceModel ?? undefined;
+      deviceDetails['deviceManufacturer'] = caps.deviceManufacturer ?? undefined;
+      deviceDetails['deviceApiLevel'] = caps.deviceApiLevel ?? undefined;
+      deviceDetails['platformVersion'] = caps.platformVersion ?? undefined;
+      deviceDetails['deviceName'] = caps.deviceName ?? undefined;
+      deviceDetails['deviceUDID'] = caps.deviceUDID ?? undefined;
+      if (deviceDetails['platformName'].toLowerCase() === 'ios') {
+        deviceDetails['deviceManufacturer'] = 'APPLE';
+        deviceDetails['deviceModel'] = deviceDetails['deviceName'];
+      }
     } catch {
       log.err('Failed to extract sessionId from session Object.');
       throw result;
     }
-    Reporter.initReport(sessionId);
+    Reporter.initReport(sessionId, deviceDetails);
     return result;
   }
 

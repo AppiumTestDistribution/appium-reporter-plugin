@@ -4,17 +4,18 @@ import { parse } from 'node-html-parser';
 const { v4: uuidv4 } = require('uuid');
 import { htmlTemplatePath, jsonReportPath, testStatusValues } from './constants';
 
-async function initReport(sessionID) {
+async function initReport(sessionID, deviceDetails) {
   if (sessionID && sessionID.length > 0) {
     let file = editJsonFile(jsonReportPath);
     file.append('sessions', sessionID);
+    file.set(`testInfo.${sessionID}.deviceInfo`, deviceDetails);
     file.save();
   } else {
     throw 'Report creation failed because of invalid session ID';
   }
 }
 
-async function setTestInfo(sessionID, testName, testStatus, error) {
+async function setTestInfo(sessionID, testName, testStatus, error = undefined) {
   if (sessionID === undefined || testName === undefined || testStatus === undefined)
     throw new Error('sessionID, testName, testStatus are mandatory arguments');
 
@@ -26,6 +27,7 @@ async function setTestInfo(sessionID, testName, testStatus, error) {
   info['testName'] = Buffer.from(testName, 'utf8').toString('base64');
   info['testStatus'] = Buffer.from(testStatus.toUpperCase(), 'utf8').toString('base64');
   if (error) info['error'] = Buffer.from(error, 'utf8').toString('base64');
+  info['deviceInfo'] = file.get(`testInfo.${sessionID}.deviceInfo`);
   file.set(`testInfo.${sessionID}`, info);
   file.save();
 }

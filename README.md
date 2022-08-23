@@ -58,9 +58,9 @@ Note:
 
  ### Install from code base
  ```
- 1. set APPIUM_HOME to a local directory
- ex: export APPIUM_HOME=~/Documents/AppiumTestDistribution/appium-reporter-plugin/local_appium_home
- 
+ 1. set APPIUM_HOME to a local directory and install drivers needed
+  export APPIUM_HOME=~/Documents/AppiumTestDistribution/appium-reporter-plugin/local_appium_home
+
  2. npm run install-plugin
  ```
 
@@ -73,6 +73,11 @@ Note:
 ### Run tests
 `npm run test`
 
+Note : If you are overriding APPIIM_HOME make sure drivers are installed 
+```  
+appium driver install xcuitest
+appium driver install uiautomator2
+```
 
 
 

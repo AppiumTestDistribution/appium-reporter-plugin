@@ -1,6 +1,5 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
-export const HTML_REPORT_FILE = `${__dirname}/../../appium-reports/newReport.html`;
 
 // api call to setTestinfo binding is made with params
 export const setTestInfo = async function (sessionId, testName, testStatus, error) {
@@ -27,8 +26,8 @@ export const getReport = async () => {
 };
 
 // simple funciton to write contents to file
-export const createReportFile = async function (data) {
-  fs.writeFile(HTML_REPORT_FILE, data, 'utf-8', (err) => {
+export const createReportFile = async function (data, path) {
+  fs.writeFile(path, data, 'utf-8', (err) => {
     if (err) throw err;
   });
 };

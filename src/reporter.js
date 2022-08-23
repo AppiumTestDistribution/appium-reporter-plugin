@@ -65,8 +65,8 @@ async function buildReport() {
       'utf8'
     );
     sessionLinks = `${sessionLinks} 
-    <li  class='nav-item' state='${testStatus}'>
-      <a href='#' class='nav-link' onclick=setTestCmdLinks('${sessionId}')>
+    <li  class='nav-item' data-state='${testStatus}'>
+      <a href='#' class='nav-link' onclick='setTestCmdLinks("${sessionId}")'>
         ${testName}
       </a>
     </li>`;

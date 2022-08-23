@@ -209,16 +209,16 @@
               const filterSelected = $('#filter').val();
               switch(filterSelected){
                 case "0":
-                    $('li[state="PASSED"]').removeClass('visually-hidden');
-                    $('li[state="FAILED"]').removeClass('visually-hidden');
+                    $('li[data-state="PASSED"]').removeClass('visually-hidden');
+                    $('li[data-state="FAILED"]').removeClass('visually-hidden');
                     break;
                 case "1":
-                    $('li[state="PASSED"]').removeClass('visually-hidden');
-                    $('li[state="FAILED"]').addClass('visually-hidden');
+                    $('li[data-state="PASSED"]').removeClass('visually-hidden');
+                    $('li[data-state="FAILED"]').addClass('visually-hidden');
                     break;
                 case "2":
-                    $('li[state="FAILED"]').removeClass('visually-hidden');
-                    $('li[state="PASSED"]').addClass('visually-hidden');
+                    $('li[data-state="FAILED"]').removeClass('visually-hidden');
+                    $('li[data-state="PASSED"]').addClass('visually-hidden');
                     break;                   
               };
             }
@@ -233,7 +233,7 @@
         <div class="container-fluid">
             <div class="row">
                 <nav class="col-md-2 d-md-block sidebar bg-light border-end min-vh-100" id="testNav">
-                    <div class="position-sticky" id="sidebarMenu">
+                    <div class="position-sticky">
                         <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 text-muted">
                             <span> Execution Summary</span>
                         </h6>    
@@ -256,7 +256,7 @@
                     </div>
                 </nav>
                 <nav class="col-md-2 d-md-block sidebar bg-light min-vh-100" id="cmdNav">
-                    <div class="position-sticky pt-3" id="sidebarMenu">
+                    <div class="position-sticky pt-3">
                         <h6 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 text-muted">
                             <span>Test Status</span>
                         </h6>    
@@ -272,10 +272,10 @@
                 </nav>
                 <main class="col-md-6  px-md-5 min-vh-100">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h4 class="h5" id="command"></h4>
+                        <h4 class="h5" id="command"> Command </h4>
                     </div>
                     <div class="row" id="context">
-                        <img id='cmd-context' class='border border-secondary col-md-6 img-responsive' alt='No Image' onclick='goFullscreen(this)' src='' >  
+                        <img id='cmd-context' class='border border-secondary col-md-6 img-responsive' alt='No Image' onclick='goFullscreen(this)' src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='>  
                         <div class="col-md-6">
                             <div class="table-responsive">
                                 <table class="table" id="table">

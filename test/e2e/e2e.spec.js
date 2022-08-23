@@ -12,7 +12,7 @@ const TEST_PORT = 4723;
 import { fs as afs } from 'appium/support';
 const fs = require('fs');
 import { expect } from 'chai';
-import { parse } from 'node-html-parser';
+const html5Lint = require('html5-lint');
 
 const TEST_FAKE_APP = path.join(
   APPIUM_HOME,
@@ -37,33 +37,33 @@ const WDIO_OPTS = {
 };
 
 describe('Plugin Test', function () {
+  let server,
+    driver = null;
+
+  // this hook is intended to be run before the hooks create
+  before(async function () {
+    await afs.rimraf(APPIUM_HOME);
+    await afs.rimraf(JSON_REPORT_FILE);
+    await afs.rimraf(HTML_REPORT_FILE);
+  });
+
+  pluginE2EHarness({
+    before,
+    after,
+    server,
+    port: TEST_PORT,
+    host: TEST_HOST,
+    appiumHome: APPIUM_HOME,
+    driverName: 'fake',
+    driverSource: 'npm',
+    driverSpec: FAKE_DRIVER_DIR,
+    pluginName: 'appium-reporter-plugin',
+    pluginSource: 'local',
+    pluginSpec: THIS_PLUGIN_DIR,
+  });
+
   describe('Generate Report', function () {
-    let server,
-      driver = null;
-
-    // this hook is intended to be run before the hooks create
     before(async function () {
-      await afs.rimraf(APPIUM_HOME);
-      await afs.rimraf(JSON_REPORT_FILE);
-      await afs.rimraf(HTML_REPORT_FILE);
-    });
-
-    pluginE2EHarness({
-      before,
-      after,
-      server,
-      port: TEST_PORT,
-      host: TEST_HOST,
-      appiumHome: APPIUM_HOME,
-      driverName: 'fake',
-      driverSource: 'npm',
-      driverSpec: FAKE_DRIVER_DIR,
-      pluginName: 'appium-reporter-plugin',
-      pluginSource: 'local',
-      pluginSpec: THIS_PLUGIN_DIR,
-    });
-
-    it('should add command data', async function () {
       driver = await wdio(WDIO_OPTS);
 
       // custom command setTestInfo is added to driver object
@@ -77,19 +77,37 @@ describe('Plugin Test', function () {
       });
       const alert1 = await driver.$('#AlertButton');
       await alert1.click();
-    });
-
-    afterEach(async function () {
-      const title = this.currentTest.title;
-      const state = this.currentTest.state;
+      const title = 'Sample Test';
+      const state = 'PASSED';
       let error = '';
-      if (this.currentTest.hasOwnProperty('err')) {
-        error = this.currentTest.err.stack;
-      }
       await driver.setTestInfo(title, state, error);
       await driver.deleteSession();
       const report = await driver.getReport();
-      await createReportFile(report);
+      await createReportFile(report, HTML_REPORT_FILE);
+    });
+
+    it('should generate html report file', function () {
+      expect(fs.existsSync(HTML_REPORT_FILE)).to.be.true;
+    });
+
+    it('html generated should be valid', (done) => {
+      const html = fs.readFileSync(HTML_REPORT_FILE, 'utf8');
+
+      html5Lint(html, (err, results) => {
+        let msgs = results.messages;
+        let msgTypes = [];
+        msgs.forEach(async function (msg) {
+          var type = msg.type, // error or warning
+            message = msg.message,
+            lastLine = msg.lastLine,
+            lastColumn = msg.lastColumn,
+            extract = msg.extract;
+          msgTypes.push(type);
+          console.log(`HTML5 Lint ${type}: ${lastLine}:${lastColumn} :${message} \n \t ${extract}`);
+        });
+        expect(msgTypes).to.not.include('error');
+        done();
+      });
     });
   });
 });

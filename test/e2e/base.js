@@ -1,5 +1,4 @@
 import fetch from 'node-fetch';
-import fs from 'fs';
 
 // api call to setTestinfo binding is made with params
 export const setTestInfo = async function (sessionId, testName, testStatus, error) {
@@ -23,11 +22,4 @@ export const getReport = async () => {
   const response = await fetch(url);
   const data = await response.text();
   return data;
-};
-
-// simple funciton to write contents to file
-export const createReportFile = async function (data, path) {
-  fs.writeFile(path, data, 'utf-8', (err) => {
-    if (err) throw err;
-  });
 };

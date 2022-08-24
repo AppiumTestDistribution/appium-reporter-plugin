@@ -1,7 +1,7 @@
 import path from 'path';
 import { remote as wdio } from 'webdriverio';
 import { pluginE2EHarness } from 'appium/test';
-import { setTestInfo, getReport, createReportFile } from './base';
+import { setTestInfo, getReport } from './base';
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const JSON_REPORT_FILE = path.join(THIS_PLUGIN_DIR, 'lib', 'report.json');
@@ -10,7 +10,6 @@ const FAKE_DRIVER_DIR = '@appium/fake-driver';
 const TEST_HOST = 'localhost';
 const TEST_PORT = 4723;
 import { fs as afs } from 'appium/support';
-const fs = require('fs');
 import { expect } from 'chai';
 const html5Lint = require('html5-lint');
 
@@ -63,6 +62,7 @@ describe('Plugin Test', function () {
   });
 
   describe('Generate Report', function () {
+    let report;
     before(async function () {
       driver = await wdio(WDIO_OPTS);
 
@@ -82,18 +82,11 @@ describe('Plugin Test', function () {
       let error = '';
       await driver.setTestInfo(title, state, error);
       await driver.deleteSession();
-      const report = await driver.getReport();
-      await createReportFile(report, HTML_REPORT_FILE);
-    });
-
-    it('should generate html report file', function () {
-      expect(fs.existsSync(HTML_REPORT_FILE)).to.be.true;
+      report = await driver.getReport();
     });
 
     it('html generated should be valid', (done) => {
-      const html = fs.readFileSync(HTML_REPORT_FILE, 'utf8');
-
-      html5Lint(html, (err, results) => {
+      html5Lint(report, (err, results) => {
         let msgs = results.messages;
         let msgTypes = [];
         msgs.forEach(async function (msg) {

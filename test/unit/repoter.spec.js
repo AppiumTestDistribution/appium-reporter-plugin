@@ -18,10 +18,21 @@ describe('Record data in JSON file', function () {
   });
 
   it('Should init report json', async function () {
-    await Reporter.initReport('test');
+    let deviceDetails = {};
+    deviceDetails['platformName'] = 'android';
+    await Reporter.initReport('test', deviceDetails);
     const file = editJsonFile(`${__dirname}/${path}`);
     const fileContents = file.get();
-    expect(fileContents).to.deep.equal({ sessions: ['test'] });
+    expect(fileContents).to.deep.equal({
+      sessions: ['test'],
+      testInfo: {
+        test: {
+          deviceInfo: {
+            platformName: 'android',
+          },
+        },
+      },
+    });
   });
 
   it('Should record command details to json file', async function () {

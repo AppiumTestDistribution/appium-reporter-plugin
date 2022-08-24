@@ -92,9 +92,6 @@ ToDo
     sessionId
     overall timing of test
     number of android and ios
-    device info of test run
 * expose the exclusion command list 
 * expose screenshot resize params as arguments 
 * githooks for lint and pretty
-* github pipelines
-* add tests for ios

@@ -31,6 +31,7 @@
   },
   "homepage": "https://github.com/AppiumTestDistribution/appium-reporter-plugin#readme",
   "dependencies": {
+    "@appium/base-plugin": "^1.10.2",
     "edit-json-file": "^1.7.0",
     "jpeg-js": "^0.4.4",
     "node-html-parser": "^5.3.3",

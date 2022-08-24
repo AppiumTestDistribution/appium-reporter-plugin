@@ -1,4 +1,7 @@
 # appium-reporter-plugin
+![example workflow](https://github.com/AppiumTestDistribution/appium-reporter-plugin/actions/workflows/node.js.yml/badge.svg)
+
+
 
 ### Intro
 `appium-reporter-plugin` is appium 2.0 plugin, for generating simple html report with screenshots. Consolidated Report is generated for all the test that ran in the appium session. Report can be fetched from server and be written to file (just like screenshots).

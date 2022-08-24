@@ -1,4 +1,4 @@
-import BasePlugin from '@appium/base-plugin';
+import { BasePlugin } from 'appium/plugin';
 import sharp from 'sharp';
 import Reporter from './reporter';
 const prettyHrtime = require('pretty-hrtime');

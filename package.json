@@ -1,6 +1,6 @@
 {
   "name": "appium-reporter-plugin",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.6",
   "description": "Appium 2.0 plugin for generating html report with screenshots server side.",
   "main": "./lib/index.js",
   "scripts": {
@@ -31,7 +31,6 @@
   },
   "homepage": "https://github.com/AppiumTestDistribution/appium-reporter-plugin#readme",
   "dependencies": {
-    "@appium/base-plugin": "^1.10.2",
     "edit-json-file": "^1.7.0",
     "jpeg-js": "^0.4.4",
     "node-html-parser": "^5.3.3",

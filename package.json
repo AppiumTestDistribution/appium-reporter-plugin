@@ -33,7 +33,7 @@
   "dependencies": {
     "edit-json-file": "^1.7.0",
     "jpeg-js": "^0.4.4",
-    "node-html-parser": "^5.3.3",
+    "node-html-parser": "^6.1.0",
     "pretty-hrtime": "^1.0.3",
     "sharp": "^0.30.7",
     "uuid": "^8.3.2"

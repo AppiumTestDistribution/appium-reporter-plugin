@@ -31,10 +31,16 @@
   },
   "homepage": "https://github.com/AppiumTestDistribution/appium-reporter-plugin#readme",
   "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^10.0.1",
+    "chart.js": "^3.9.1",
     "edit-json-file": "^1.7.0",
     "jpeg-js": "^0.4.4",
     "node-html-parser": "^5.3.3",
     "pretty-hrtime": "^1.0.3",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^4.3.1",
+    "react-dom": "^18.2.0",
     "sharp": "^0.30.7",
     "uuid": "^8.3.2"
   },
@@ -49,7 +55,6 @@
     "mainClass": "ReportPlugin"
   },
   "devDependencies": {
-    "node-fetch": "^2.6.7",
     "@babel/core": "^7.18.10",
     "@babel/eslint-parser": "^7.5.4",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
@@ -61,6 +66,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "html5-lint": "^0.3.0",
     "mocha": "^10.0.0",
+    "node-fetch": "^2.6.7",
     "prettier": "^2.7.1",
     "ts-node": "^10.9.1",
     "webdriverio": "^7.20.9"

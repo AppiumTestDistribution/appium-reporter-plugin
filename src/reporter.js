@@ -2,7 +2,7 @@ const fs = require('fs');
 const editJsonFile = require('edit-json-file');
 import { parse } from 'node-html-parser';
 const { v4: uuidv4 } = require('uuid');
-import { htmlTemplatePath, jsonReportPath, testStatusValues } from './constants';
+import { htmlTemplatePath, jsonReportPath, bundlePath, testStatusValues } from './constants';
 
 async function initReport(sessionID, deviceDetails) {
   if (sessionID && sessionID.length > 0) {
@@ -43,35 +43,17 @@ async function setCmdData(sessionID, key, value, args) {
 
 async function buildReport() {
   let file = editJsonFile(jsonReportPath);
-  const data = await fs.readFileSync(htmlTemplatePath, 'utf8');
-  let dom = await parse(data);
-
-  // set all data variable
   const allData = file.get();
-  const dataScript = `
-  <script>
-    const data = ${JSON.stringify(allData)};
-  </script>`;
-  dom.getElementById('data').innerHTML = dataScript;
 
-  // set test links
-  const sessions = file.get('sessions');
-  let sessionLinks = '';
-  sessions.forEach((sessionId) => {
-    const testName = Buffer.from(file.get(`testInfo.${sessionId}.testName`), 'base64').toString(
-      'utf8'
-    );
-    const testStatus = Buffer.from(file.get(`testInfo.${sessionId}.testStatus`), 'base64').toString(
-      'utf8'
-    );
-    sessionLinks = `${sessionLinks} 
-    <li  class='nav-item' data-state='${testStatus}'>
-      <a href='#' class='nav-link' onclick='setTestCmdLinks("${sessionId}")'>
-        ${testName}
-      </a>
-    </li>`;
-  });
-  dom.getElementById('testLinks').innerHTML = sessionLinks;
+  const htmlTemplate = await fs.readFileSync(htmlTemplatePath, 'utf8');
+  let dom = await parse(htmlTemplate);
+
+  const bundlejs = await fs.readFileSync(bundlePath, 'utf8');
+
+  const dataScript = `<script>
+    const data = ${JSON.stringify(allData)};
+    ${bundlejs} </script>`;
+  dom.getElementById('root').innerHTML = dataScript;
   return dom.toString();
 }
 

@@ -58,7 +58,10 @@ describe('Plugin Test', function () {
       const title = this.currentTest.title;
       const state = this.currentTest.state;
       let error = '';
-      if (this.currentTest.hasOwnProperty('err')) {
+      // if (this.currentTest.hasOwnProperty("err")) {
+      //   error = this.currentTest.err.stack;
+      // }
+      if(Object.prototype.hasOwnProperty.call(this.currentTest, 'err')) {
         error = this.currentTest.err.stack;
       }
       await driver.setTestInfo(title, state, error);
@@ -74,7 +77,7 @@ describe('Plugin Test', function () {
     beforeEach(async function () {
       driver = await wdio({
         ...WDIO_PARAMS,
-        capabilities: iOSCapabilities,
+        capabilities: androidCapabilities,
       });
 
       // custom command setTestInfo is added to driver object
@@ -100,7 +103,10 @@ describe('Plugin Test', function () {
       const title = this.currentTest.title;
       const state = this.currentTest.state;
       let error = '';
-      if (this.currentTest.hasOwnProperty('err')) {
+      // if (this.currentTest.hasOwnProperty("err")) {
+      //   error = this.currentTest.err.stack;
+      // }
+      if(Object.prototype.hasOwnProperty.call(this.currentTest, 'err')) {
         error = this.currentTest.err.stack;
       }
       await driver.setTestInfo(title, state, error);

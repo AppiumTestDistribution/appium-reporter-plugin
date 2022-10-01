@@ -3,7 +3,7 @@ node_modules
 lib
 *.html
 .DS_Store
-
+!src/reportTemplate/template.html
 # Logs
 logs
 *.log

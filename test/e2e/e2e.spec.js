@@ -87,7 +87,7 @@ describe('Plugin Test', function () {
 
     it('html generated should be valid', (done) => {
       html5Lint(report, (err, results) => {
-        let msgs = results.messages;
+        let msgs = results.messages ?? [];
         let msgTypes = [];
         msgs.forEach(async function (msg) {
           var type = msg.type, // error or warning

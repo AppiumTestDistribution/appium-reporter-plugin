@@ -4,6 +4,7 @@ lib
 *.html
 .DS_Store
 !src/reportTemplate/template.html
+src/report.json
 # Logs
 logs
 *.log

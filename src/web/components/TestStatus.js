@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export const TestStatus = (props) => {
   const sessionId = props.sessionId;
@@ -15,8 +15,8 @@ export const TestStatus = (props) => {
       <h4 className="summary-text-heading">Test Status</h4>
       <h5 className="summary-text">{testStatus}</h5>
       {testInfo.error !== undefined &&
-        window.atob(testInfo.error) !== "undefined" &&
-        testInfo.error !== "" && (
+        window.atob(testInfo.error) !== 'undefined' &&
+        testInfo.error !== '' && (
           <div>
             <h4 className="summary-text-heading"> Error </h4>
             <h5 className="summary-text"> {window.atob(testInfo.error)} </h5>

@@ -2,7 +2,7 @@ const fs = require('fs');
 const editJsonFile = require('edit-json-file');
 import { parse } from 'node-html-parser';
 const { v4: uuidv4 } = require('uuid');
-import { htmlTemplatePath, jsonReportPath, testStatusValues } from './constants';
+import { htmlTemplatePath, jsonReportPath, bundlePath, testStatusValues } from './constants';
 
 async function initReport(sessionID, deviceDetails) {
   if (sessionID && sessionID.length > 0) {
@@ -43,80 +43,17 @@ async function setCmdData(sessionID, key, value, args) {
 
 async function buildReport() {
   let file = editJsonFile(jsonReportPath);
-  const data = await fs.readFileSync(htmlTemplatePath, 'utf8');
-  let dom = await parse(data);
-  const webpack = require('webpack');
-  const HtmlWebpackPlugin = require('html-webpack-plugin');
-
-  const port = process.env.PORT || 3000;
-
-  // set all data variable
   const allData = file.get();
-  const dataScript = `
-  <script>
+
+  const htmlTemplate = await fs.readFileSync(htmlTemplatePath, 'utf8');
+  let dom = await parse(htmlTemplate);
+
+  const bundlejs = await fs.readFileSync(bundlePath, 'utf8');
+
+  const dataScript = `<script>
     const data = ${JSON.stringify(allData)};
-  </script>`;
+    ${bundlejs} </script>`;
   dom.getElementById('root').innerHTML = dataScript;
-
-  webpack(
-    {
-      mode: 'development',
-      entry: './src/App.js',
-      output: {
-        filename: 'bundle.js',
-      },
-      devtool: 'inline-source-map',
-      module: {
-        rules: [
-          {
-            test: /\.(js)$/,
-            exclude: [
-              /node_modules/,
-              '/constants.js',
-              '/index.js',
-              '/logger.js',
-              '/plugin.js',
-              '/reporter.js',
-            ],
-            use: ['babel-loader'],
-          },
-          {
-            test: /\.css$/,
-            use: [
-              {
-                loader: 'style-loader',
-              },
-              {
-                loader: 'css-loader',
-                options: {
-                  sourceMap: true,
-                },
-              },
-            ],
-          },
-        ],
-      },
-      plugins: [
-        new HtmlWebpackPlugin({
-          template: 'src/template.html',
-        }),
-      ],
-      devServer: {
-        host: 'localhost',
-        port: port,
-        historyApiFallback: true,
-        open: true,
-      },
-    },
-    (err, stats) => {
-      // [Stats Object](#stats-object)
-      if (err || stats.hasErrors()) {
-        // [Handle errors here](#error-handling)
-      }
-      // Done processing
-    }
-  );
-
   return dom.toString();
 }
 

@@ -1,6 +1,6 @@
-import React, { useState, useLayoutEffect } from "react";
-import { TestStatus } from "./TestStatus";
-import { Command } from "./Command";
+import React, { useState, useLayoutEffect } from 'react';
+import { TestStatus } from './TestStatus';
+import { Command } from './Command';
 
 export const Test = (props) => {
   let sessionId = props.sessionId;
@@ -18,9 +18,9 @@ export const Test = (props) => {
         className={
           !showTestSummary
             ? selectedCommand0 == cmd0 && selectedCommand1 == cmd1
-              ? "sidebar-link active"
-              : "sidebar-link"
-            : "sidebar-link"
+              ? 'sidebar-link active'
+              : 'sidebar-link'
+            : 'sidebar-link'
         }
       >
         <button
@@ -44,9 +44,7 @@ export const Test = (props) => {
           <span>Test Status</span>
         </h6>
         <ul className="sidebar-links" id="testSummary">
-          <li
-            className={showTestSummary ? "sidebar-link active" : "sidebar-link"}
-          >
+          <li className={showTestSummary ? 'sidebar-link active' : 'sidebar-link'}>
             <button
               className="link-text"
               onClick={() => {

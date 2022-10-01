@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { OverAllExecutionSummary } from "./OverallExecutionSummary";
-import { Test } from "./Test";
+import React, { useState } from 'react';
+import { OverAllExecutionSummary } from './OverallExecutionSummary';
+import { Test } from './Test';
 
 export const Navbar = (props) => {
   let data = props.data.data;
@@ -18,15 +18,12 @@ export const Navbar = (props) => {
     }
 
     let newFilteredSessions = [];
-    let filterCondition = "PASSED";
+    let filterCondition = 'PASSED';
     if (value == 2) {
-      filterCondition = "FAILED";
+      filterCondition = 'FAILED';
     }
     data.sessions.map((sessionId, key) => {
-      if (
-        window.atob(data["testInfo"][sessionId]["testStatus"]) ===
-        filterCondition
-      ) {
+      if (window.atob(data['testInfo'][sessionId]['testStatus']) === filterCondition) {
         newFilteredSessions.push(sessionId);
       }
     });
@@ -39,9 +36,9 @@ export const Navbar = (props) => {
         className={
           !showSummary
             ? selectTest == sessionId
-              ? "sidebar-link active"
-              : "sidebar-link"
-            : "sidebar-link"
+              ? 'sidebar-link active'
+              : 'sidebar-link'
+            : 'sidebar-link'
         }
         data-state={testStatus}
       >
@@ -66,7 +63,7 @@ export const Navbar = (props) => {
           <span>Execution Summary</span>
         </h6>
         <ul className="sidebar-links" id="overAllExecutionSummay">
-          <li className={showSummary ? "sidebar-link active" : "sidebar-link"}>
+          <li className={showSummary ? 'sidebar-link active' : 'sidebar-link'}>
             <button
               className="link-text"
               onClick={() => {
@@ -82,7 +79,7 @@ export const Navbar = (props) => {
           <span>Tests</span>
           <select
             className="form-select form-select-sm"
-            style={{ width: "auto" }}
+            style={{ width: 'auto' }}
             onChange={(e) => filter(e)}
             id="filter"
           >
@@ -95,19 +92,11 @@ export const Navbar = (props) => {
         </h6>
         <ul className="sidebar-links" id="testLinks">
           {filteredSessions.map((sessionId, key) => {
-            const testName = window.atob(
-              data["testInfo"][sessionId]["testName"]
-            );
-            const testStatus = window.atob(
-              data["testInfo"][sessionId]["testStatus"]
-            );
+            const testName = window.atob(data['testInfo'][sessionId]['testName']);
+            const testStatus = window.atob(data['testInfo'][sessionId]['testStatus']);
             return (
               <div key={key}>
-                <SessionTab
-                  testName={testName}
-                  testStatus={testStatus}
-                  sessionId={sessionId}
-                />
+                <SessionTab testName={testName} testStatus={testStatus} sessionId={sessionId} />
               </div>
             );
           })}

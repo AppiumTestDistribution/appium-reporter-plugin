@@ -71,7 +71,7 @@ describe('Record data in JSON file', function () {
     const fileContents = file.get();
     expect(fileContents).to.deep.equal({
       sessions: ['test'],
-      testInfo: { test: { testName: 'U2FtcGxlIHRlc3QgbmFtZQ==', testStatus: 'UEFTU0VE' } },
+      testInfo: { test: { testName: 'Sample test name', testStatus: 'PASSED' } },
     });
   });
 

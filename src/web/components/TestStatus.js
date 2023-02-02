@@ -4,8 +4,8 @@ export const TestStatus = (props) => {
   const sessionId = props.sessionId;
   const data = props.data;
   const testInfo = data.testInfo[sessionId];
-  const testName = window.atob(testInfo.testName);
-  const testStatus = window.atob(testInfo.testStatus);
+  const testName = testInfo.testName;
+  const testStatus = testInfo.testStatus;
 
   return (
     <div className="test-summary-page">
@@ -21,7 +21,7 @@ export const TestStatus = (props) => {
             <h4 className="summary-text-heading"> Error </h4>
             <h5 className="summary-text"> {window.atob(testInfo.error)} </h5>
           </div>
-        )}
+      )} 
       <h4 className="summary-text-heading">Platform</h4>
       <h5 className="summary-text">{testInfo.deviceInfo.platformName}</h5>
       <h4 className="summary-text-heading">OS Version</h4>

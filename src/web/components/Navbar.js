@@ -23,7 +23,7 @@ export const Navbar = (props) => {
       filterCondition = 'FAILED';
     }
     data.sessions.map((sessionId, key) => {
-      if (window.atob(data['testInfo'][sessionId]['testStatus']) === filterCondition) {
+      if (data['testInfo'][sessionId]['testStatus'] === filterCondition) {
         newFilteredSessions.push(sessionId);
       }
     });
@@ -92,8 +92,8 @@ export const Navbar = (props) => {
         </h6>
         <ul className="sidebar-links" id="testLinks">
           {filteredSessions.map((sessionId, key) => {
-            const testName = window.atob(data['testInfo'][sessionId]['testName']);
-            const testStatus = window.atob(data['testInfo'][sessionId]['testStatus']);
+            const testName = data['testInfo'][sessionId]['testName'];
+            const testStatus = data['testInfo'][sessionId]['testStatus'];
             return (
               <div key={key}>
                 <SessionTab testName={testName} testStatus={testStatus} sessionId={sessionId} />

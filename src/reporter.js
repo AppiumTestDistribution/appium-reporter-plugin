@@ -24,8 +24,8 @@ async function setTestInfo(sessionID, testName, testStatus, error = undefined) {
   if (!testStatusValues.includes(testStatus.toUpperCase()))
     throw new Error(`Test status ${testStatus} is not valid state.`);
 
-  info['testName'] = Buffer.from(testName, 'utf8').toString('base64');
-  info['testStatus'] = Buffer.from(testStatus.toUpperCase(), 'utf8').toString('base64');
+  info['testName'] = testName;
+  info['testStatus'] = testStatus.toUpperCase();
   if (error) info['error'] = Buffer.from(error, 'utf8').toString('base64');
   info['deviceInfo'] = file.get(`testInfo.${sessionID}.deviceInfo`);
   file.set(`testInfo.${sessionID}`, info);

@@ -9,8 +9,8 @@ export const OverAllExecutionSummary = (props) => {
   let resultElements = [];
   for (const key in results) {
     let result = results[key];
-    const name = window.atob(result.testName);
-    const status = window.atob(result.testStatus);
+    const name = result.testName;
+    const status = result.testStatus;
     if (status === 'PASSED') {
       passCount = passCount + 1;
     } else {

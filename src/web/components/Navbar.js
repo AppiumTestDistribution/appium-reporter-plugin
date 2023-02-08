@@ -4,7 +4,7 @@ import { Test } from './Test';
 
 export const Navbar = (props) => {
   let data = props.data.data;
-  let sessions = data.sessions;
+  let sessions = data.tests.map(test => test.sessionId);
   const [filteredSessions, setFilteredSessions] = useState(sessions);
   const [showSummary, setShowSummary] = useState(true);
   const [selectTest, setSelectTest] = useState(null);
@@ -22,10 +22,11 @@ export const Navbar = (props) => {
     if (value == 2) {
       filterCondition = 'FAILED';
     }
-    data.sessions.map((sessionId, key) => {
-      if (data['testInfo'][sessionId]['testStatus'] === filterCondition) {
-        newFilteredSessions.push(sessionId);
-      }
+    data.tests.map((test, key) => {
+        const testStatus =test.testStatus;
+        if(testStatus === filterCondition) {
+            newFilteredSessions.push(test.sessionId);
+        }
     });
     setFilteredSessions(newFilteredSessions);
   };
@@ -92,8 +93,9 @@ export const Navbar = (props) => {
         </h6>
         <ul className="sidebar-links" id="testLinks">
           {filteredSessions.map((sessionId, key) => {
-            const testName = data['testInfo'][sessionId]['testName'];
-            const testStatus = data['testInfo'][sessionId]['testStatus'];
+            const test = data.tests.filter(test => test.sessionId === sessionId)[0];
+            const testName = test.testName;
+            const testStatus = test.testStatus;
             return (
               <div key={key}>
                 <SessionTab testName={testName} testStatus={testStatus} sessionId={sessionId} />

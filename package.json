@@ -1,6 +1,6 @@
 {
   "name": "appium-reporter-plugin",
-  "version": "1.0.0-beta.10",
+  "version": "1.0.0-beta.11",
   "description": "Appium 2.0 plugin for generating html report with screenshots server side.",
   "main": "./lib/index.js",
   "scripts": {
@@ -34,6 +34,7 @@
   "dependencies": {
     "babel-cli": "^6.26.0",
     "edit-json-file": "^1.7.0",
+    "fs-extra": "^11.1.0",
     "jpeg-js": "^0.4.4",
     "node-html-parser": "^6.1.1",
     "pretty-hrtime": "^1.0.3",
@@ -60,12 +61,12 @@
     "chai-as-promised": "^7.1.1",
     "css-loader": "^6.7.1",
     "eslint": "^8.24.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-prettier": "4.2.1",
     "html5-lint": "^0.3.0",
     "mocha": "^10.0.0",
     "node-fetch": "^2.6.7",
     "prettier": "^2.7.1",
-    "eslint-config-prettier": "8.5.0",
-    "eslint-plugin-prettier": "4.2.1",
     "style-loader": "^3.3.1",
     "ts-node": "^10.9.1",
     "webdriverio": "^7.20.9"

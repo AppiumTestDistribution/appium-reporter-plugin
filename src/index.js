@@ -1,9 +1,22 @@
 const fs = require('fs');
-import { jsonReportPath } from './constants';
+const fse = require('fs-extra');
+import { reportPath } from './constants';
+import log from './logger.js';
+
 try {
-  fs.unlinkSync(jsonReportPath);
-  console.log(`${jsonReportPath} is deleted.`);
+  if (fs.existsSync(reportPath)){
+    fse.emptyDirSync(reportPath, {});
+  } 
+  log.info(`${reportPath} is deleted.`);
 } catch (err) {
-  console.log(`Unable to delete ${jsonReportPath}. \n ${err}`);
+  log.error(`Unable to delete ${reportPath}`);
 }
+try {
+  if (!fs.existsSync(reportPath)){
+    fs.mkdirSync(reportPath);
+  }
+} catch(err) {
+  log.error(`Unable to create ${reportPath}`);
+};
+
 export { ReportPlugin } from './plugin';

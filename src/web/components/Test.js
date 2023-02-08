@@ -5,7 +5,7 @@ import { Command } from './Command';
 export const Test = (props) => {
   let sessionId = props.sessionId;
   let data = props.data;
-  let session = data.sesssionData[sessionId];
+  let session = data.sessions[sessionId];
   let showTestSummary = props.showTestSummary;
   let setShowTestSummary = props.setShowTestSummary;
 

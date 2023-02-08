@@ -3,9 +3,11 @@ import React from 'react';
 export const TestStatus = (props) => {
   const sessionId = props.sessionId;
   const data = props.data;
-  const testInfo = data.testInfo[sessionId];
-  const testName = testInfo.testName;
-  const testStatus = testInfo.testStatus;
+  const test = data.tests.filter(test => test.sessionId === sessionId)[0];
+  const testName = test.testName;
+  const testStatus = test.testStatus;
+  const error = test.error;
+  const testInfo = data.sessions[sessionId]
 
   return (
     <div className="test-summary-page">
@@ -14,12 +16,12 @@ export const TestStatus = (props) => {
       <h5 className="summary-text">{testName}</h5>
       <h4 className="summary-text-heading">Test Status</h4>
       <h5 className="summary-text">{testStatus}</h5>
-      {testInfo.error !== undefined &&
-        window.atob(testInfo.error) !== 'undefined' &&
-        testInfo.error !== '' && (
+      {error !== undefined &&
+        error !== 'undefined' &&
+        error !== '' && (
           <div>
             <h4 className="summary-text-heading"> Error </h4>
-            <h5 className="summary-text"> {window.atob(testInfo.error)} </h5>
+            <h5 className="summary-text"> {error} </h5>
           </div>
       )} 
       <h4 className="summary-text-heading">Platform</h4>

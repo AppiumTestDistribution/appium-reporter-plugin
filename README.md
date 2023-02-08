@@ -29,7 +29,8 @@ Sample implementation can be found in `test/demo/demo.spec.js` and  `test/demo/b
 
 ### Mappings / Commands
 
-`appium-reporter-plugin` assumes every test/spec uses new driver session. For commands invoked on the driver session, screenshot and metrics are captured at server side. At the end of the test i.e., before deleting the driver session, `driver.setTestInfo(..)` should be called to map test information. After all the tests are completed `driver.getReport()` can be called to fetch the html report and written to file. 
+`appium-reporter-plugin` assumes every test/spec uses new driver session. For commands invoked on the driver session, screenshot and metrics are captured at server side. At the end of the test i.e., before deleting the driver session, `session/${sessionId}/setTestInfo` should be called to map test information. After all the tests are completed `/getReport` can be called to fetch the html report and written to file. To clear the test info stored on the server, `/deleteReportData`
+ can be used. 
 
 #### setTestInfo
 For mapping test information to data collected, server binding `POST: /session/:sessionId/setTestInfo` is exposed. This binding accepts JSON payload with keys as mentioned below
@@ -50,10 +51,14 @@ ex:
 
 After execution of all the tests, report can be downloaded from server using `GET: /getReport`. `getReport` returns a html report with screenshots as a string.  
 
+### deleteReportData
+screenshots and test information is stored on server and this occupies space. To clear the space and delete all the test infomation on server `DELETE: /deleteReportData` can be used.
+
+-- demo.spec.js has working example and we recommamd checking the implementation. 
 
 Note: 
 1. `appium-reporter-plugin` doesn't gather test results data from any unit test framework. 
-2. Bindings exposed by this plugin are not default W3C binding, hence these commands cant be drirecly called on driver object. Either wdio setCommand should be used or direct api call can be made.
+2. Bindings exposed by this plugin are not default W3C binding, hence these commands can't be drirecly called on driver object. Either wdio setCommand should be used or direct api call can be made.
   
 
 ### Build 

@@ -1,5 +1,5 @@
 import { remote as wdio } from 'webdriverio';
-import { setTestInfo, getReport, createReportFile } from './base';
+import { setTestInfo, getReport, createReportFile, deleteReportData } from './base';
 const APPIUM_HOST = '127.0.0.1';
 const APPIUM_PORT = 4723;
 export const WDIO_PARAMS = {
@@ -44,6 +44,11 @@ describe('Plugin Test', function () {
       await driver.addCommand('getReport', async function () {
         return await getReport();
       });
+
+      // custom command deleteReportData is added to driver object
+      await driver.addCommand('deleteReportData', async function () {
+        return await deleteReportData();
+      });
     });
 
     it('Should click alert button in Android', async function () {
@@ -58,16 +63,16 @@ describe('Plugin Test', function () {
       const title = this.currentTest.title;
       const state = this.currentTest.state;
       let error = '';
-      // if (this.currentTest.hasOwnProperty("err")) {
-      //   error = this.currentTest.err.stack;
-      // }
       if(Object.prototype.hasOwnProperty.call(this.currentTest, 'err')) {
         error = this.currentTest.err.stack;
       }
       await driver.setTestInfo(title, state, error);
       await driver.deleteSession();
+    });
+    after(async function() {
       const report = await driver.getReport();
-      await createReportFile(report);
+      await driver.deleteReportData();
+      await createReportFile(report, 'android');
     });
   });
 
@@ -77,7 +82,7 @@ describe('Plugin Test', function () {
     beforeEach(async function () {
       driver = await wdio({
         ...WDIO_PARAMS,
-        capabilities: androidCapabilities,
+        capabilities: iOSCapabilities,
       });
 
       // custom command setTestInfo is added to driver object
@@ -88,6 +93,11 @@ describe('Plugin Test', function () {
       // custom command getReport is added to driver object
       await driver.addCommand('getReport', async function () {
         return await getReport();
+      });
+
+      // custom command deleteReportData is added to driver object
+      await driver.addCommand('deleteReportData', async function () {
+        return await deleteReportData();
       });
     });
 
@@ -103,16 +113,17 @@ describe('Plugin Test', function () {
       const title = this.currentTest.title;
       const state = this.currentTest.state;
       let error = '';
-      // if (this.currentTest.hasOwnProperty("err")) {
-      //   error = this.currentTest.err.stack;
-      // }
       if(Object.prototype.hasOwnProperty.call(this.currentTest, 'err')) {
         error = this.currentTest.err.stack;
       }
       await driver.setTestInfo(title, state, error);
       await driver.deleteSession();
+    });
+
+    after(async function() {
       const report = await driver.getReport();
-      await createReportFile(report);
+      await driver.deleteReportData();
+      await createReportFile(report, 'ios');
     });
   });
 });

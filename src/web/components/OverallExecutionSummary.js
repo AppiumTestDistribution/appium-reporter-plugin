@@ -7,17 +7,20 @@ export const OverAllExecutionSummary = (props) => {
   let failCount = 0;
   let unknownCount = 0;
   let resultElements = [];
-  for (const key in results) {
-    let result = results[key];
-    const name = result.testName;
-    const status = result.testStatus;
+
+  const tests = props.data.tests;
+  for(const test of tests) {
+    const name = test.testName;
+    const status = test.testStatus;
     if (status === 'PASSED') {
       passCount = passCount + 1;
-    } else {
+    } else if (status === 'FAILED') {
       failCount = failCount + 1;
+    } else {
+      unknownCount = unknownCount + 1;
     }
-    resultElements = resultElements.concat({ name, status, ...result });
-    console.log(resultElements);
+    const deviceDetails = props.data.sessions[test.sessionId];
+    resultElements = resultElements.concat({ name, status, ...deviceDetails });
   }
 
   return (

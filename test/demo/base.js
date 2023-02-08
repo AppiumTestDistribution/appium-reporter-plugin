@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
-export const HTML_REPORT_FILE = `${__dirname}/../../appium-reports/newReport.html`;
+export const HTML_REPORT_DIR = `${__dirname}/../../appium-reports`;
 
 // api call to setTestinfo binding is made with params
 export const setTestInfo = async function (sessionId, testName, testStatus, error) {
@@ -26,9 +26,14 @@ export const getReport = async () => {
   return data;
 };
 
+export const deleteReportData = async () => {
+  const url = 'http://localhost:4723/deleteReportData';
+  await fetch(url, { method: 'DELETE'});
+};
+
 // simple funciton to write contents to file
-export const createReportFile = async function (data) {
-  fs.writeFile(HTML_REPORT_FILE, data, 'utf-8', (err) => {
+export const createReportFile = async function (data, fileName) {
+  fs.writeFile(`${HTML_REPORT_DIR}/${fileName}.html`, data, 'utf-8', (err) => {
     if (err) throw err;
   });
 };

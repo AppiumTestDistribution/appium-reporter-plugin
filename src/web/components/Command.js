@@ -7,7 +7,7 @@ export const Command = (props) => {
   let cmd1 = props.cmd1;
 
   let dataId = cmd0 + cmd1;
-  let commandData = data.sesssionData[sessionId].data[dataId];
+  let commandData = data.sessions[sessionId].data[dataId];
 
   let args = commandData['args'];
   let execTime = args['execution time'];

@@ -3,7 +3,9 @@ import sharp from 'sharp';
 import Reporter from './reporter';
 const prettyHrtime = require('pretty-hrtime');
 import log from './logger.js';
-import { cmdExclusionList } from './constants';
+import { cmdExclusionList, reportPath } from './constants';
+const fs = require('fs');
+import fse from 'fs-extra';
 
 export class ReportPlugin extends BasePlugin {
   constructor(pluginName) {
@@ -23,12 +25,22 @@ export class ReportPlugin extends BasePlugin {
     },
   };
 
+
   static async updateServer(expressApp) {
-    expressApp.all('/getReport', ReportPlugin.getReport);
+    expressApp.get('/getReport', ReportPlugin.getReport);
+    expressApp.delete('/deleteReportData', await ReportPlugin.deleteReportData);
   }
 
   static async getReport(req, res) {
     res.send(await Reporter.buildReport());
+  }
+
+  static async deleteReportData(req, res) {
+    if (await fs.existsSync(reportPath)) {
+      await fse.emptyDirSync(reportPath);
+      log.info(`${reportPath} is deleted.`);
+    } 
+    res.send();
   }
 
   async setTestInfo(next, driver, ...args) {
@@ -54,7 +66,7 @@ export class ReportPlugin extends BasePlugin {
         deviceDetails['deviceModel'] = deviceDetails['deviceName'];
       }
     } catch {
-      log.err('Failed to extract sessionId from session Object.');
+      log.error('Failed to extract sessionId from session Object.');
       throw result;
     }
     Reporter.initReport(sessionId, deviceDetails);
@@ -67,8 +79,13 @@ export class ReportPlugin extends BasePlugin {
       const result = await next();
       const end = process.hrtime(start);
 
+      const beforeScreenshot = process.hrtime();
       let base64screenshot = await driver.getScreenshot();
+      const afterScreenshot = process.hrtime(beforeScreenshot);
+      log.info(`session: ${driver.sessionId}; cmd ${commandName}; time appium took for screenshot: ${prettyHrtime(afterScreenshot)}`);
 
+
+      const beforeimgProcess = process.hrtime();
       const buffer = base64screenshot.split(';base64,').pop();
       let imgBuffer = Buffer.from(buffer, 'base64');
 
@@ -86,17 +103,25 @@ export class ReportPlugin extends BasePlugin {
           return data.toString('base64');
         })
         .catch((err) => {
-          console.log(`downsize issue ${err}`);
+          log.error(`downsize issue ${err}`);
           return null;
         });
       img = `data:image/jpeg;base64, ${img}`;
+      const afterimgProcess = process.hrtime(beforeimgProcess);
+      log.info(`session: ${driver.sessionId}; cmd ${commandName}; time appium took cmd execution: ${prettyHrtime(afterimgProcess)}`);
+
 
       const time = prettyHrtime(end);
+      log.info(`session: ${driver.sessionId}; cmd ${commandName}; time appium took cmd execution: ${prettyHrtime(time)}`);
       const data = { 'execution time': time };
       data['sessionId'] = driver.sessionId;
       if (result) data['response'] = result;
       if (args) data['request'] = args;
+
+      const beforeWriteToFile = process.hrtime();
       await Reporter.setCmdData(driver.sessionId, commandName, img, data);
+      const afterWriteToFile = process.hrtime(beforeWriteToFile);
+      log.info(`session: ${driver.sessionId}; cmd ${commandName}; Time taken for storing data: ${prettyHrtime(afterWriteToFile)}`);
       return result;
     }
     return await next();

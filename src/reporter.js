@@ -58,10 +58,8 @@ async function setCmdData(sessionId, key, value, args) {
 }
 
 async function buildReport() {
-  // console.log(`jsonReportPath = ${jsonReportPath}`);
   let file = await editJsonFile(jsonReportPath);
   let allData = await file.toObject();
-  // console.log(`all data = ${allData}`);
   allData.sessions = {};
   const sessions = allData.tests.map(y => y.sessionId);
   for(const session of sessions) {

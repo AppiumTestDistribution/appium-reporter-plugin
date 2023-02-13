@@ -7,8 +7,9 @@ export const cmdExclusionList = [
   'createsession',
   'deletesession',
   'title',
-  'screenshot',
+  'getscreenshot',
   'status',
   'getreport',
+  'closeapp'
 ];
 export const testStatusValues = ['PASSED', 'FAILED'];

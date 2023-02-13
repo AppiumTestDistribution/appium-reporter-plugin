@@ -1,6 +1,6 @@
 {
   "name": "appium-reporter-plugin",
-  "version": "1.0.0-beta.11",
+  "version": "1.0.0-beta.12",
   "description": "Appium 2.0 plugin for generating html report with screenshots server side.",
   "main": "./lib/index.js",
   "scripts": {
@@ -12,7 +12,7 @@
     "test": "npm run unit & npm run e2e",
     "unit": "mocha --require ts-node/register ./test/unit/*.spec.js --timeout 260000",
     "e2e": "npm run build && mocha --require ts-node/register ./test/e2e/e2e.spec.js --timeout 260000",
-    "demo": "mocha --require ts-node/register ./test/demo/demo.spec.js --timeout 260000",
+    "demo": "mocha --require ts-node/register ./test/demo/*.spec.js --timeout 260000",
     "lint": "npx eslint . --fix",
     "prettier": "npx prettier 'src/**/*.js' --write --single-quote"
   },

@@ -65,25 +65,35 @@ export class ReportPlugin extends BasePlugin {
         deviceDetails['deviceManufacturer'] = 'APPLE';
         deviceDetails['deviceModel'] = deviceDetails['deviceName'];
       }
-    } catch {
-      log.error('Failed to extract sessionId from session Object.');
-      throw result;
+    } catch(err) {
+      log.error(`Failed to extract sessionId from session Object from result: \n ${JSON.stringify(result)}`);
+
+      log.error(err);
+      throw err;
     }
     Reporter.initReport(sessionId, deviceDetails);
     return result;
   }
 
   async handle(next, driver, commandName, ...args) {
-    if (!cmdExclusionList.includes(commandName.toLowerCase())) {
-      const start = process.hrtime();
-      const result = await next();
-      const end = process.hrtime(start);
 
+    log.info(`session: ${driver.sessionId}; cmd ${commandName}; processing command: ${commandName}`);
+    const start = process.hrtime();
+    const result = await next();
+    const end = process.hrtime(start);
+    let img;
+    if (!cmdExclusionList.includes(commandName.toLowerCase())) {
+      log.info(`session: ${driver.sessionId}; cmd ${commandName}; Command not in exlusion list for screenshot`);
       const beforeScreenshot = process.hrtime();
-      let base64screenshot = await driver.getScreenshot();
+      let base64screenshot;
+      try {
+        base64screenshot= await driver.getScreenshot(); 
+      } catch(err){
+        log.error(`session: ${driver.sessionId}; cmd ${commandName}; Failed to take screenshot`);
+        log.error(err);
+      }
       const afterScreenshot = process.hrtime(beforeScreenshot);
       log.info(`session: ${driver.sessionId}; cmd ${commandName}; time appium took for screenshot: ${prettyHrtime(afterScreenshot)}`);
-
 
       const beforeimgProcess = process.hrtime();
       const buffer = base64screenshot.split(';base64,').pop();
@@ -91,7 +101,7 @@ export class ReportPlugin extends BasePlugin {
 
       let meta = await sharp(imgBuffer).metadata();
 
-      let img = await sharp(imgBuffer);
+      img = await sharp(imgBuffer);
       if (meta.width > 500) {
         img = await img.resize(500);
       }
@@ -108,22 +118,19 @@ export class ReportPlugin extends BasePlugin {
         });
       img = `data:image/jpeg;base64, ${img}`;
       const afterimgProcess = process.hrtime(beforeimgProcess);
-      log.info(`session: ${driver.sessionId}; cmd ${commandName}; time appium took cmd execution: ${prettyHrtime(afterimgProcess)}`);
-
-
-      const time = prettyHrtime(end);
-      log.info(`session: ${driver.sessionId}; cmd ${commandName}; time appium took cmd execution: ${prettyHrtime(time)}`);
-      const data = { 'execution time': time };
-      data['sessionId'] = driver.sessionId;
-      if (result) data['response'] = result;
-      if (args) data['request'] = args;
-
-      const beforeWriteToFile = process.hrtime();
-      await Reporter.setCmdData(driver.sessionId, commandName, img, data);
-      const afterWriteToFile = process.hrtime(beforeWriteToFile);
-      log.info(`session: ${driver.sessionId}; cmd ${commandName}; Time taken for storing data: ${prettyHrtime(afterWriteToFile)}`);
-      return result;
+      log.info(`session: ${driver.sessionId}; cmd ${commandName}; time took to process image: ${prettyHrtime(afterimgProcess)}`);
     }
-    return await next();
+    const commandExecTime = prettyHrtime(end);
+    log.info(`session: ${driver.sessionId}; cmd ${commandName}; time taken by  appium for cmd execution: ${commandExecTime}`);
+    const data = { 'execution time': commandExecTime };
+    data['sessionId'] = driver.sessionId;
+    if (result) data['response'] = result;
+    if (args) data['request'] = args;
+
+    const beforeWriteToFile = process.hrtime();
+    await Reporter.setCmdData(driver.sessionId, commandName, img, data);
+    const afterWriteToFile = process.hrtime(beforeWriteToFile);
+    log.info(`session: ${driver.sessionId}; cmd ${commandName}; Time taken by plugin to store data: ${prettyHrtime(afterWriteToFile)}`);
+    return result;
   }
 }

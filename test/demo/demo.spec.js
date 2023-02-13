@@ -53,10 +53,12 @@ describe('Plugin Test', function () {
 
     it('Should click alert button in Android', async function () {
       await driver.url('https://practicetestautomation.com/practice-test-login/');
+      await driver.getTitle(); // this shouldnt break the appium server
       const uelement = await driver.$('#username');
       await uelement.setValue('test123');
       const pelement = await driver.$('#password');
       await pelement.setValue('test123');
+      
     });
 
     afterEach(async function () {
@@ -72,7 +74,7 @@ describe('Plugin Test', function () {
     after(async function() {
       const report = await driver.getReport();
       await driver.deleteReportData();
-      await createReportFile(report, 'android');
+      await createReportFile(report, 'android-browser');
     });
   });
 
@@ -123,7 +125,7 @@ describe('Plugin Test', function () {
     after(async function() {
       const report = await driver.getReport();
       await driver.deleteReportData();
-      await createReportFile(report, 'ios');
+      await createReportFile(report, 'ios-browser');
     });
   });
 });

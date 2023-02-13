@@ -87,6 +87,7 @@ describe('Plugin Test', function () {
 
     it('html generated should be valid', (done) => {
       html5Lint(report, (err, results) => {
+        console.log(`results ==> ${JSON.stringify(results)}`);
         let msgs = results.messages ?? [];
         let msgTypes = [];
         msgs.forEach(async function (msg) {

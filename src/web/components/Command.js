@@ -19,7 +19,7 @@ export const Command = (props) => {
       <div className="test-summary-page">
         <h5 className="test-summary-header summary-text-heading">{cmd0}</h5>
         <div className="container-row">
-          {commandData.img && <img className="screenshot" src={commandData.img} alt="No image" />}
+          {commandData.img && commandData.img !== 'undefined' && commandData.img.length > 0 && <img className="screenshot" src={commandData.img} alt="No image" />}
           <div className="test-info">
             <div className="test-info-table">
               <table className="table" id="table" rules="groups">

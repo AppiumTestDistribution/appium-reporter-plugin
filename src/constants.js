@@ -10,6 +10,7 @@ export const cmdExclusionList = [
   'getscreenshot',
   'status',
   'getreport',
-  'closeapp'
+  'closeapp',
+  'background',  
 ];
 export const testStatusValues = ['PASSED', 'FAILED'];

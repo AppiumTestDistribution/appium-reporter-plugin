@@ -12,4 +12,4 @@ export const cmdExclusionList = [
   'getreport',
   'closeapp'
 ];
-export const testStatusValues = ['PASSED', 'FAILED'];
+export const testStatusValues = ['PASSED', 'FAILED', 'PENDING'];

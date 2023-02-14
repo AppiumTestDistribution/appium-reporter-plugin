@@ -3,7 +3,7 @@ const editJsonFile = require('edit-json-file');
 import { parse } from 'node-html-parser';
 const { v4: uuidv4 } = require('uuid');
 import log from './logger.js';
-import { htmlTemplatePath, jsonReportPath, bundlePath, testStatusValues, reportPath } from './constants';
+import { htmlTemplatePath, jsonReportPath, bundlePath, reportPath } from './constants';
 
 async function getSessionFilePath(sessionId){
   return `${reportPath}/${sessionId}.json`;
@@ -27,21 +27,28 @@ async function initReport(sessionId, deviceDetails) {
   }
 }
 
+async function getTestStatus(status){
+  status = status.toUpperCase();
+  if(['PASS', 'PASSED'].includes(status))
+    return 'PASSED';
+  else if(['FAIL', 'FAILED'].includes(status))  
+    return 'FAILED';
+  else if(['PENDING', 'WIP'].includes(status))  
+    return 'PENDING';  
+  else
+    return 'UNKNOWN';
+}
+
 async function setTestInfo(sessionId, testName, testStatus, error = undefined) {
   if (sessionId === undefined || testName === undefined || testStatus === undefined)
     throw new Error('sessionId, testName, testStatus are mandatory arguments');
 
   let file = await editJsonFile(jsonReportPath);
-
-  if (!testStatusValues.includes(testStatus.toUpperCase()))
-    throw new Error(`Test status ${testStatus} is not valid state.`);
-
   const info = {};
   info['testName'] = testName;
-  info['testStatus'] = testStatus.toUpperCase();
+  info['testStatus'] = await getTestStatus(testStatus);
   if (error) 
     info['error'] = error;
-    // info['error'] = Buffer.from(error, 'utf8').toString('base64');
   info['sessionId'] = sessionId;
   await file.append('tests', info);
   await file.save();

@@ -13,4 +13,4 @@ export const cmdExclusionList = [
   'closeapp',
   'background',  
 ];
-export const testStatusValues = ['PASSED', 'FAILED'];
+export const testStatusValues = ['PASSED', 'FAILED', 'PENDING'];

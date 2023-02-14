@@ -35,11 +35,11 @@ Sample implementation can be found in `test/demo/demo.spec.js` and  `test/demo/b
 #### setTestInfo
 For mapping test information to data collected, server binding `POST: /session/:sessionId/setTestInfo` is exposed. This binding accepts JSON payload with keys as mentioned below
 
-| key         | Description                    | Type      | Accepted Values |
-| ----------- | -----------                    | ----      | --------------- |
-| testName    | Name of the test               | Mandatory | any string      |
-| testStatus  | Test execution status          | Mandatory | PASSED, FAILED  |
-| error       | Reason for test Failure        | Optinal   | any string      |
+| key         | Description                    | Type      | Accepted Values                                                  |
+| ----------- | -----------                    | ----      | ---------------                                                  |
+| testName    | Name of the test               | Mandatory | any string                                                       |
+| testStatus  | Test execution status          | Mandatory | PASSED, FAILED, PENDING, All other string considered as unknown  |
+| error       | Reason for test Failure        | Optinal   | any string                                                       |
 
 ex: 
 ```

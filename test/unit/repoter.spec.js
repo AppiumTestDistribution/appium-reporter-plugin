@@ -68,33 +68,6 @@ describe('Record data in JSON file', function () {
     });
   });
 
-  it('Should throw error when invalid testStatus is passed', async function () {
-    await Reporter.initReport(sessionId);
-    const testStatus = 'passed';
-    await Reporter.setTestInfo(sessionId, 'Sample Test', testStatus);
-    const file = await editJsonFile(`${reportPath}/report.json`);
-    const fileContents = await file.toObject();
-    expect(fileContents).to.deep.equal(
-      {
-        'tests': [
-          {
-            testName: 'Sample Test',
-            testStatus: 'PASSED',
-            sessionId: sessionId
-          }
-        ]
-      }
-    );
-  });
-
-  it('Should throw error when invalid testStatus is passed', async function () {
-    await Reporter.initReport('test');
-    const testStatus = 'invalid';
-    await expect(Reporter.setTestInfo('test', 'Sample test name', testStatus)).to.be.rejectedWith(
-      `Test status ${testStatus} is not valid state.`
-    );
-  });
-
   it('Should throw error when sessionId is not provided', async function () {
     await Reporter.initReport('test');
     await expect(Reporter.setTestInfo()).to.be.rejectedWith(

@@ -69,7 +69,7 @@
     "prettier": "^2.7.1",
     "style-loader": "^3.3.1",
     "ts-node": "^10.9.1",
-    "webdriverio": "^7.20.9"
+    "webdriverio": "^8.3.8"
   },
   "files": [
     "lib"

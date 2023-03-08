@@ -13,6 +13,7 @@ export const Command = (props) => {
   let execTime = args['execution time'];
   let request = args['request'];
   let response = args['response'];
+  let error = args['error']
 
   return (
     <div>
@@ -56,6 +57,12 @@ export const Command = (props) => {
                 <div>
                   <h4 className="summary-text-heading">Response</h4>
                   <h6 className="json-text">{JSON.stringify(response, undefined, 2)} </h6>
+                </div>
+              )}
+              {error && (
+                <div>
+                  <h4 className="summary-text-heading">Error</h4>
+                  <h6 className="json-text">{error} </h6>
                 </div>
               )}
             </div>

@@ -29,6 +29,7 @@ export class ReportPlugin extends BasePlugin {
   static async updateServer(expressApp) {
     expressApp.get('/getReport', ReportPlugin.getReport);
     expressApp.delete('/deleteReportData', await ReportPlugin.deleteReportData);
+    expressApp.post('/setSkippedTestInfo', await ReportPlugin.setSkippedTestInfo);
   }
 
   static async getReport(req, res) {
@@ -41,6 +42,15 @@ export class ReportPlugin extends BasePlugin {
       log.info(`${reportPath} is deleted.`);
     } 
     res.send();
+  }
+
+  static async setSkippedTestInfo(req, res) {
+        let body = req.body;
+        let testName = body.testName;
+        let testStatus = body.testStatus; 
+        let error = body.error;        
+        await Reporter.setTestInfo(null, testName, testStatus, error);
+        res.send();
   }
 
   async setTestInfo(next, driver, ...args) {
@@ -79,8 +89,22 @@ export class ReportPlugin extends BasePlugin {
 
     log.info(`session: ${driver.sessionId}; cmd ${commandName}; processing command: ${commandName}`);
     const start = process.hrtime();
-    const result = await next();
+    let result;
+    let data = {};
+    data['sessionId'] = driver.sessionId;
+    if (args) data['request'] = args;
+    try {
+     result = await next();
+    } catch(e){
+      log.error(`error in executing command ${commandName} \n ${e.message}`);
+      data['error'] = e.message;
+    }
+    if (result) data['response'] = result;
     const end = process.hrtime(start);
+    const commandExecTime = prettyHrtime(end);
+    log.info(`session: ${driver.sessionId}; cmd ${commandName}; time taken by  appium for cmd execution: ${commandExecTime}`);
+    data['execution time'] = commandExecTime ;
+
     let img;
     if (!cmdExclusionList.includes(commandName.toLowerCase())) {
       log.info(`session: ${driver.sessionId}; cmd ${commandName}; Command not in exlusion list for screenshot`);
@@ -119,18 +143,12 @@ export class ReportPlugin extends BasePlugin {
       img = `data:image/jpeg;base64, ${img}`;
       const afterimgProcess = process.hrtime(beforeimgProcess);
       log.info(`session: ${driver.sessionId}; cmd ${commandName}; time took to process image: ${prettyHrtime(afterimgProcess)}`);
+  
+      const beforeWriteToFile = process.hrtime();
+      await Reporter.setCmdData(driver.sessionId, commandName, img, data);
+      const afterWriteToFile = process.hrtime(beforeWriteToFile);
+      log.info(`session: ${driver.sessionId}; cmd ${commandName}; Time taken by plugin to store data: ${prettyHrtime(afterWriteToFile)}`);
     }
-    const commandExecTime = prettyHrtime(end);
-    log.info(`session: ${driver.sessionId}; cmd ${commandName}; time taken by  appium for cmd execution: ${commandExecTime}`);
-    const data = { 'execution time': commandExecTime };
-    data['sessionId'] = driver.sessionId;
-    if (result) data['response'] = result;
-    if (args) data['request'] = args;
-
-    const beforeWriteToFile = process.hrtime();
-    await Reporter.setCmdData(driver.sessionId, commandName, img, data);
-    const afterWriteToFile = process.hrtime(beforeWriteToFile);
-    log.info(`session: ${driver.sessionId}; cmd ${commandName}; Time taken by plugin to store data: ${prettyHrtime(afterWriteToFile)}`);
     return result;
   }
 }

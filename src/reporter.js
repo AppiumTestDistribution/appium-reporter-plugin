@@ -40,8 +40,8 @@ async function getTestStatus(status){
 }
 
 async function setTestInfo(sessionId, testName, testStatus, error = undefined) {
-  if (sessionId === undefined || testName === undefined || testStatus === undefined)
-    throw new Error('sessionId, testName, testStatus are mandatory arguments');
+  if (sessionId === undefined || sessionId === null)
+    sessionId = await uuidv4();
 
   let file = await editJsonFile(jsonReportPath);
   const info = {};

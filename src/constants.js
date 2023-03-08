@@ -11,6 +11,6 @@ export const cmdExclusionList = [
   'status',
   'getreport',
   'closeapp',
-  'background',  
+  'background'
 ];
 export const testStatusValues = ['PASSED', 'FAILED', 'PENDING'];

@@ -61,13 +61,15 @@ export const Test = (props) => {
           <span>Commands</span>
         </h6>
         <ul className="sidebar-links" id="commandLinks">
-          {session.cmd.map((cmd, key) => {
-            return (
-              <div key={key}>
-                <CommandTab cmd0={cmd[0]} cmd1={cmd[1]} />
-              </div>
-            );
-          })}
+          { session.cmd &&
+            session.cmd.map((cmd, key) => {
+              return (
+                <div key={key}>
+                  <CommandTab cmd0={cmd[0]} cmd1={cmd[1]} />
+                </div>
+              );
+            })
+          }
         </ul>
       </nav>
       {showTestSummary && <TestStatus data={data} sessionId={sessionId} />}

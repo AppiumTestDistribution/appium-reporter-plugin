@@ -22,6 +22,9 @@ export const Navbar = (props) => {
     if (value == 2) {
       filterCondition = 'FAILED';
     }
+    if (value == 3) {
+      filterCondition = 'PENDING';
+    }
     data.tests.map((test, key) => {
         const testStatus =test.testStatus;
         if(testStatus === filterCondition) {
@@ -89,6 +92,7 @@ export const Navbar = (props) => {
             </option>
             <option value="1">Passed</option>
             <option value="2">Failed</option>
+            <option value="3">Pending</option>
           </select>
         </h6>
         <ul className="sidebar-links" id="testLinks">

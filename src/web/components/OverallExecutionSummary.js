@@ -11,7 +11,6 @@ export const OverAllExecutionSummary = (props) => {
 
   const tests = props.data.tests;
   for(const test of tests) {
-    console.log(`test = ${test.testName}; status = ${status}`);
     const name = test.testName;
     const status = test.testStatus;
     if (status === 'PASSED') {
@@ -23,10 +22,10 @@ export const OverAllExecutionSummary = (props) => {
     } else {
       unknownCount = unknownCount + 1;
     }
-    const deviceDetails = props.data.sessions[test.sessionId];
+    const testDetails = props.data.sessions[test.sessionId];
+    const deviceDetails = 'deviceInfo' in testDetails ? testDetails.deviceInfo : undefined;
     resultElements = resultElements.concat({ name, status, ...deviceDetails });
   }
-  console.log(`passcount = ${passCount}; failCount = ${failCount}; pendingCount = ${pendingCount}; unknownCount = ${unknownCount}`);
 
   return (
     <div className="overall-execution-summary-data">
@@ -60,14 +59,21 @@ export const OverAllExecutionSummary = (props) => {
         </thead>
         <tbody>
           {resultElements.map((result, key) => {
+            let testname, teststatus, platformName, platformVersion, deviceManufacturer, deviceModel;
+              testname = result.name;
+              teststatus = result.status;
+              platformName = 'platformName' in result ? result.platformName : 'Unknown';
+              platformVersion = 'platformVersion' in result ? result.platformVersion : 'Unknown';
+              deviceManufacturer = 'deviceManufacturer' in result ? result.deviceManufacturer : 'Unknown';
+              deviceModel = 'deviceModel' in result ? result.deviceModel : 'Unknown';
             return (
               <tr className="table-row" key={key}>
-                <td className="table-cell"> {result.name} </td>
-                <td className="table-cell"> {result.status} </td>
-                <td className="table-cell"> {result.deviceInfo.platformName} </td>
-                <td className="table-cell"> {result.deviceInfo.platformVersion} </td>
-                <td className="table-cell"> {result.deviceInfo.deviceManufacturer} </td>
-                <td className="table-cell"> {result.deviceInfo.deviceModel} </td>
+                <td className="table-cell"> {testname} </td>
+                <td className="table-cell"> {teststatus} </td>
+                <td className="table-cell"> {platformName} </td>
+                <td className="table-cell"> {platformVersion} </td>
+                <td className="table-cell"> {deviceManufacturer} </td>
+                <td className="table-cell"> {deviceModel} </td>
               </tr>
             );
           })}

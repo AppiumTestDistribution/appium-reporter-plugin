@@ -73,7 +73,7 @@ async function buildReport() {
     const sessionFilePath = `${reportPath}/${session}.json`;
     const sessionData = await editJsonFile(sessionFilePath);
     allData.sessions[session] = sessionData.toObject();
-  }
+  }  
 
   const htmlTemplate = await fs.readFileSync(htmlTemplatePath, 'utf8');
   let dom = await parse(htmlTemplate);

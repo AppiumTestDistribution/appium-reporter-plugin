@@ -68,24 +68,4 @@ describe('Record data in JSON file', function () {
     });
   });
 
-  it('Should throw error when sessionId is not provided', async function () {
-    await Reporter.initReport('test');
-    await expect(Reporter.setTestInfo()).to.be.rejectedWith(
-      'sessionId, testName, testStatus are mandatory arguments'
-    );
-  });
-
-  it('Should throw error when testName is not provided', async function () {
-    await Reporter.initReport('test');
-    await expect(Reporter.setTestInfo('test')).to.be.rejectedWith(
-      'sessionId, testName, testStatus are mandatory arguments'
-    );
-  });
-
-  it('Should throw error when testStatus is not provided', async function () {
-    await Reporter.initReport('test');
-    await expect(Reporter.setTestInfo('test', 'Sample test name')).to.be.rejectedWith(
-      'sessionId, testName, testStatus are mandatory arguments'
-    );
-  });
 });

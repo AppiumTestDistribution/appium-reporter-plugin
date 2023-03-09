@@ -12,24 +12,10 @@ export class ReportPlugin extends BasePlugin {
     super(pluginName);
   }
 
-  // this plugin supports a non-standard 'get report' command
-  static newMethodMap = {
-    '/session/:sessionId/setTestInfo': {
-      POST: {
-        command: 'setTestInfo',
-        payloadParams: {
-          required: ['testName', 'testStatus'],
-          optional: ['error'],
-        },
-      },
-    },
-  };
-
-
   static async updateServer(expressApp) {
-    expressApp.get('/getReport', ReportPlugin.getReport);
+    expressApp.get('/getReport', await ReportPlugin.getReport);
     expressApp.delete('/deleteReportData', await ReportPlugin.deleteReportData);
-    expressApp.post('/setSkippedTestInfo', await ReportPlugin.setSkippedTestInfo);
+    expressApp.post('/setTestInfo', await ReportPlugin.setTestInfo);
   }
 
   static async getReport(req, res) {
@@ -44,17 +30,14 @@ export class ReportPlugin extends BasePlugin {
     res.send();
   }
 
-  static async setSkippedTestInfo(req, res) {
+  static async setTestInfo(req, res) {
         let body = req.body;
+        let sessionId = body.sessionId;
         let testName = body.testName;
         let testStatus = body.testStatus; 
         let error = body.error;        
-        await Reporter.setTestInfo(null, testName, testStatus, error);
+        await Reporter.setTestInfo(sessionId, testName, testStatus, error);
         res.send();
-  }
-
-  async setTestInfo(next, driver, ...args) {
-    return await Reporter.setTestInfo(driver.sessionId, ...args);
   }
 
   async createSession(next) {

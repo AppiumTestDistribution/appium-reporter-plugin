@@ -4,13 +4,13 @@ export const HTML_REPORT_DIR = `${__dirname}/../../appium-reports`;
 
 // api call to setTestinfo binding is made with params
 export const setTestInfo = async function (sessionId, testName, testStatus, error) {
-  const url = `http://localhost:4723/session/${sessionId}/setTestInfo`;
+  const url = 'http://127.0.0.1:4723/setTestInfo';
 
   const reqBody = {};
+  reqBody.sessionId = sessionId;
   reqBody.testName = testName;
   reqBody.testStatus = testStatus;
   reqBody.error = error;
-
   await fetch(url, {
     method: 'post',
     body: JSON.stringify(reqBody),
@@ -20,14 +20,14 @@ export const setTestInfo = async function (sessionId, testName, testStatus, erro
 
 // api call to getReport binding is made to fetch html report
 export const getReport = async () => {
-  const url = 'http://localhost:4723/getReport';
+  const url = 'http://127.0.0.1:4723/getReport';
   const response = await fetch(url);
   const data = await response.text();
   return data;
 };
 
 export const deleteReportData = async () => {
-  const url = 'http://localhost:4723/deleteReportData';
+  const url = 'http://127.0.0.1:4723/deleteReportData';
   await fetch(url, { method: 'DELETE'});
 };
 

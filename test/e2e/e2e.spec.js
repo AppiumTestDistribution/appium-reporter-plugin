@@ -1,7 +1,7 @@
 import path from 'path';
 import { remote as wdio } from 'webdriverio';
 import { pluginE2EHarness } from 'appium/test';
-import { setTestInfo, getReport } from './base';
+import { setTestInfo, getReport, deleteReportData } from './base';
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const JSON_REPORT_FILE = path.join(THIS_PLUGIN_DIR, 'lib', 'report.json');
@@ -75,6 +75,12 @@ describe('Plugin Test', function () {
       await driver.addCommand('getReport', async function () {
         return await getReport();
       });
+
+      await driver.addCommand('deleteReportData', async function(){
+        return await deleteReportData();
+      });
+
+
       const alert1 = await driver.$('#AlertButton');
       await alert1.click();
       const title = 'Sample Test';
@@ -83,6 +89,7 @@ describe('Plugin Test', function () {
       await driver.setTestInfo(title, state, error);
       await driver.deleteSession();
       report = await driver.getReport();
+      await driver.deleteReportData();
     });
 
     it('html generated should be valid', (done) => {

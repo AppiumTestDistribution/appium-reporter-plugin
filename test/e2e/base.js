@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 
 // api call to setTestinfo binding is made with params
 export const setTestInfo = async function (sessionId, testName, testStatus, error) {
-  const url = `http://localhost:4723/session/${sessionId}/setTestInfo`;
+  const url = 'http://localhost:4723/setTestInfo';
 
   const reqBody = {};
   reqBody.testName = testName;
@@ -22,4 +22,12 @@ export const getReport = async () => {
   const response = await fetch(url);
   const data = await response.text();
   return data;
+};
+
+// api call to getReport binding is made to fetch html report
+export const deleteReportData = async () => {
+  const url = 'http://localhost:4723/deleteReportData';
+  await fetch(url, {
+    method: 'delete',
+  });
 };

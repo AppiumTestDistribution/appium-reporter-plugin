@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class SampleTest {
 
     @Test
-    @Disabled
     public void testPass(AndroidDriver driver){
         driver.findElement(AppiumBy.accessibilityId("Login")).click();
         driver.findElement(AppiumBy.accessibilityId("input-email")).sendKeys("admin");
@@ -27,6 +26,5 @@ public class SampleTest {
     public void testSkip(AndroidDriver driver){
         driver.findElement(AppiumBy.accessibilityId("Login123")).click();
     }
-
 
 }

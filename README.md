@@ -25,26 +25,30 @@ Start appium server with plugin
 ```appium --use-plugins=appium-reporter-plugin```
 
 
-Sample implementation can be found in `test/demo/demo.spec.js` and  `test/demo/base.js`
+Sample implementation can be found @
+1. JS Implementation -> `test/demo/demo.spec.js` and  `test/demo/base.js`
+2. Java Implementation -> `test/AppiumReportPluginDemo`
 
 ### Mappings / Commands
 
-`appium-reporter-plugin` assumes every test/spec uses new driver session. For commands invoked on the driver session, screenshot and metrics are captured at server side. At the end of the test i.e., before deleting the driver session, `session/${sessionId}/setTestInfo` should be called to map test information. After all the tests are completed `/getReport` can be called to fetch the html report and written to file. To clear the test info stored on the server, `/deleteReportData`
+`appium-reporter-plugin` assumes every test/spec uses new driver session. For commands invoked on the driver session, screenshot and metrics are captured at server side. At the end of the test i.e., before deleting the driver session, `/setTestInfo` should be called to map test information. After all the tests are completed `/getReport` can be called to fetch the html report and written to file. To clear the test info stored on the server, `/deleteReportData`
  can be used. 
 
 #### setTestInfo
-For mapping test information to data collected, server binding `POST: /session/:sessionId/setTestInfo` is exposed. This binding accepts JSON payload with keys as mentioned below
+For mapping test information to data collected, server binding `POST: /setTestInfo` is exposed. This binding accepts JSON payload with keys as mentioned below
 
-| key         | Description                    | Type      | Accepted Values                                                  |
-| ----------- | -----------                    | ----      | ---------------                                                  |
-| testName    | Name of the test               | Mandatory | any string                                                       |
-| testStatus  | Test execution status          | Mandatory | PASSED, FAILED, PENDING, All other string considered as unknown  |
-| error       | Reason for test Failure        | Optinal   | any string                                                       |
+| key         | Description                    | Type      | Accepted Values                                                     |
+| ----------- | -----------                    | ----      | ---------------                                                     |
+| sessionId   | driver's sessionId             | Mandatory | driver's sessionId or null if session is not created (pendig test)  |
+| testName    | Name of the test               | Mandatory | any string                                                          |
+| testStatus  | Test execution status          | Mandatory | PASSED, FAILED, PENDING, All other string considered as unknown     |
+| error       | Reason for test Failure        | Optinal   | any string                                                          |
 
 ex: 
 ```
-    {testName: 'Sum of 1 and 2 should be 3', testStatus: 'PASSED'}
-    {testName: 'Sum of 1 and 2 should be 4', testStatus: 'FAILED', error: 'Sum of 1 and 2 is 3'}
+    {sessionId: 'asdas-asdasd-asdasda-asdasdasd', testName: 'Sum of 1 and 2 should be 3', testStatus: 'PASSED'}
+    {sessionId: 'asdas-asdasd-asdasda-asdasdasd', testName: 'Sum of 1 and 2 should be 4', testStatus: 'FAILED', error: 'Sum of 1 and 2 is 3'}
+    {sessionId: null, testName: 'Sum of 1 and 2 should be 3', testStatus: 'PENDING'}
 ```
 
 #### getReport

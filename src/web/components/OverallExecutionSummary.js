@@ -22,7 +22,7 @@ export const OverAllExecutionSummary = (props) => {
     } else {
       unknownCount = unknownCount + 1;
     }
-    const testDetails = props.data.sessions[test.sessionId];
+    const testDetails = props.data.sessions[test.testId];
     const deviceDetails = 'deviceInfo' in testDetails ? testDetails.deviceInfo : undefined;
     resultElements = resultElements.concat({ name, status, ...deviceDetails });
   }

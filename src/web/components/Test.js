@@ -3,9 +3,10 @@ import { TestStatus } from './TestStatus';
 import { Command } from './Command';
 
 export const Test = (props) => {
-  let sessionId = props.sessionId;
+  let testId = props.testId;
+  // let sessionId = props.sessionId;
   let data = props.data;
-  let session = data.sessions[sessionId];
+  let session = data.sessions[testId];
   let showTestSummary = props.showTestSummary;
   let setShowTestSummary = props.setShowTestSummary;
 
@@ -72,11 +73,11 @@ export const Test = (props) => {
           }
         </ul>
       </nav>
-      {showTestSummary && <TestStatus data={data} sessionId={sessionId} />}
+      {showTestSummary && <TestStatus data={data} testId={testId}/>}
       {!showTestSummary && selectedCommand0 && selectedCommand1 && (
         <Command
           data={props.data}
-          sessionId={props.sessionId}
+          testId={testId}
           cmd0={selectedCommand0}
           cmd1={selectedCommand1}
         />

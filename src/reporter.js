@@ -40,8 +40,15 @@ async function getTestStatus(status){
 }
 
 async function setTestInfo(sessionId, testName, testStatus, error = undefined) {
-  if (sessionId === undefined || sessionId === null)
+  const tid = await uuidv4();  
+
+  if( sessionId !== undefined &&  sessionId !== null && sessionId !== 'null') {
+    const oldFileName = await getSessionFilePath(sessionId);
+    const newFileName = await getSessionFilePath(tid);
+    await fs.renameSync(oldFileName, newFileName);
+  } else if (sessionId === undefined || sessionId === null) {
     sessionId = await uuidv4();
+  }
 
   let file = await editJsonFile(jsonReportPath);
   const info = {};
@@ -50,8 +57,10 @@ async function setTestInfo(sessionId, testName, testStatus, error = undefined) {
   if (error) 
     info['error'] = error;
   info['sessionId'] = sessionId;
+  info['testId'] = tid;
   await file.append('tests', info);
   await file.save();
+
 }
 
 async function setCmdData(sessionId, key, value, args) {
@@ -68,12 +77,13 @@ async function buildReport() {
   let file = await editJsonFile(jsonReportPath);
   let allData = await file.toObject();
   allData.sessions = {};
-  const sessions = allData.tests.map(y => y.sessionId);
-  for(const session of sessions) {
-    const sessionFilePath = `${reportPath}/${session}.json`;
+  const testIds = allData.tests.map(y => [y.testId, y.sessionId]);
+  for(let i = 0; i < testIds.length; i++){
+    const testId = testIds[i][0];
+    const sessionFilePath = `${reportPath}/${testId}.json`;
     const sessionData = await editJsonFile(sessionFilePath);
-    allData.sessions[session] = sessionData.toObject();
-  }  
+    allData.sessions[testId] = sessionData.toObject();
+  }
 
   const htmlTemplate = await fs.readFileSync(htmlTemplatePath, 'utf8');
   let dom = await parse(htmlTemplate);

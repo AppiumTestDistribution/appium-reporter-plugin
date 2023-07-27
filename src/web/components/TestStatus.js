@@ -1,13 +1,14 @@
 import React from 'react';
 
 export const TestStatus = (props) => {
-  const sessionId = props.sessionId;
+  const testId = props.testId;
+  // const sessionId = props.sessionId;
   const data = props.data;
-  const test = data.tests.filter(test => test.sessionId === sessionId)[0];
+  const test = data.tests.filter(test => test.testId === testId)[0];
   const testName = test.testName;
   const testStatus = test.testStatus;
   const error = test.error;
-  const testInfo = data.sessions[sessionId]
+  const testInfo = data.sessions[testId]
 
   let platformName, platformVersion, deviceManufacturer, deviceModel, deviceApiLevel, deviceName;
   try {

@@ -1,6 +1,6 @@
 {
   "name": "appium-reporter-plugin",
-  "version": "1.1.0-beta.01",
+  "version": "1.1.0-beta.02",
   "description": "Appium 2.0 plugin for generating html report with screenshots server side.",
   "main": "./lib/index.js",
   "scripts": {
@@ -25,7 +25,7 @@
     "report",
     "screenshot"
   ],
-  "author": "",
+  "author": "Dileep Bellamkonda <dileep.srimani@gmail.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/AppiumTestDistribution/appium-reporter-plugin/issues"

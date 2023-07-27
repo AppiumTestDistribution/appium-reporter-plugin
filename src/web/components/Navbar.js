@@ -4,8 +4,8 @@ import { Test } from './Test';
 
 export const Navbar = (props) => {
   let data = props.data.data;
-  let sessions = data.tests.map(test => test.sessionId);
-  const [filteredSessions, setFilteredSessions] = useState(sessions);
+  let tests = data.tests.map(test => test.testId);
+  const [filteredTests, setFilteredTests] = useState(tests);
   const [showSummary, setShowSummary] = useState(true);
   const [selectTest, setSelectTest] = useState(null);
   const [showTestSummary, setShowTestSummary] = useState(true);
@@ -13,11 +13,11 @@ export const Navbar = (props) => {
   const filter = (e) => {
     const value = e.target.value;
     if (value == 0) {
-      setFilteredSessions(sessions);
+      setFilteredTests(tests);
       return;
     }
 
-    let newFilteredSessions = [];
+    let newFilteredTests = [];
     let filterCondition = 'PASSED';
     if (value == 2) {
       filterCondition = 'FAILED';
@@ -28,18 +28,18 @@ export const Navbar = (props) => {
     data.tests.map((test, key) => {
         const testStatus =test.testStatus;
         if(testStatus === filterCondition) {
-            newFilteredSessions.push(test.sessionId);
+            newFilteredTests.push(test.testId);
         }
     });
-    setFilteredSessions(newFilteredSessions);
+    setFilteredTests(newFilteredTests);
   };
 
-  const SessionTab = ({ sessionId, testName, testStatus }) => {
+  const SessionTab = ({testName, testStatus, testId, sessionId}) => {
     return (
       <li
         className={
           !showSummary
-            ? selectTest == sessionId
+            ? selectTest == testId
               ? 'sidebar-link active'
               : 'sidebar-link'
             : 'sidebar-link'
@@ -51,7 +51,7 @@ export const Navbar = (props) => {
           onClick={() => {
             setShowSummary(false);
             setShowTestSummary(true);
-            setSelectTest(sessionId);
+            setSelectTest(testId);
           }}
         >
           {testName}
@@ -96,13 +96,14 @@ export const Navbar = (props) => {
           </select>
         </h6>
         <ul className="sidebar-links" id="testLinks">
-          {filteredSessions.map((sessionId, key) => {
-            const test = data.tests.filter(test => test.sessionId === sessionId)[0];
+          {filteredTests.map((testId, key) => {
+            const test = data.tests.filter(test => test.testId === testId)[0];
             const testName = test.testName;
             const testStatus = test.testStatus;
+            const sessionId = test.sessionId;
             return (
               <div key={key}>
-                <SessionTab testName={testName} testStatus={testStatus} sessionId={sessionId} />
+                <SessionTab testName={testName} testStatus={testStatus} testId={testId} sessionId={sessionId} />
               </div>
             );
           })}
@@ -111,7 +112,7 @@ export const Navbar = (props) => {
       {!showSummary && (
         <Test
           data={data}
-          sessionId={selectTest}
+          testId={selectTest}
           showTestSummary={showTestSummary}
           setShowTestSummary={setShowTestSummary}
         />

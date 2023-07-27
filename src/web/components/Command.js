@@ -2,18 +2,19 @@ import React, { useEffect } from 'react';
 
 export const Command = (props) => {
   let data = props.data;
-  let sessionId = props.sessionId;
+  let testId = props.testId;
   let cmd0 = props.cmd0;
   let cmd1 = props.cmd1;
 
   let dataId = cmd0 + cmd1;
-  let commandData = data.sessions[sessionId].data[dataId];
+  let commandData = data.sessions[testId].data[dataId];
 
   let args = commandData['args'];
   let execTime = args['execution time'];
   let request = args['request'];
   let response = args['response'];
   let error = args['error']
+  let sessionId = args['sessionId']
 
   return (
     <div>

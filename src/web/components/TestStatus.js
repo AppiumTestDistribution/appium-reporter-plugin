@@ -35,6 +35,7 @@ export const TestStatus = (props) => {
       <h5 className="summary-text">{testStatus}</h5>
 
       {error !== undefined &&
+        error !== 'undefined' &&
         error !== 'null' &&
         error !== null && (
           <div>

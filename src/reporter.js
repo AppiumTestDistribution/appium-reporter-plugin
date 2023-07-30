@@ -9,15 +9,40 @@ async function getSessionFilePath(sessionId){
   return `${reportPath}/${sessionId}.json`;
 }
 
-async function initReport(sessionId, deviceDetails) {
+async function initReport(driver){
+  const deviceDetails = {};
+  let sessionId;
+  try {
+    sessionId = driver.sessionId;
+    const caps = await driver.getSession();
+    deviceDetails['platformName'] = caps.platformName ?? undefined;
+    deviceDetails['deviceModel'] = caps.deviceModel ?? undefined;
+    deviceDetails['deviceManufacturer'] = caps.deviceManufacturer ?? undefined;
+    deviceDetails['deviceApiLevel'] = caps.deviceApiLevel ?? undefined;
+    deviceDetails['platformVersion'] = caps.platformVersion ?? undefined;
+    deviceDetails['deviceName'] = caps.deviceName ?? undefined;
+    deviceDetails['deviceUDID'] = caps.deviceUDID ?? undefined;
+    if (deviceDetails['platformName'].toLowerCase() === 'ios') {
+      deviceDetails['deviceManufacturer'] = 'APPLE';
+      deviceDetails['deviceModel'] = deviceDetails['deviceName'];
+    }
+    await createReportFile(sessionId, deviceDetails);
+  } catch(err) {
+    log.error(err);
+    log.error(`Failed to extract sessionId & capabilities from driver Object: \n ${JSON.stringify(driver)}`);
+    throw err;
+  }
+}
+
+async function createReportFile(sessionId, deviceDetails) {
   try {
     if (sessionId && sessionId.length > 0) {
       let filePath = await getSessionFilePath(sessionId);
-      log.info(`Data file for session ${sessionId} created at ${filePath}`);
       let file = await editJsonFile(filePath);
       await file.set('sessionId', sessionId);
       await file.set('deviceInfo', deviceDetails);
       await file.save();
+      log.info(`Data file for session ${sessionId} created at ${filePath}`);
     } else {
       throw 'Report creation failed because of invalid session ID';
     }
@@ -54,7 +79,8 @@ async function setTestInfo(sessionId, testName, testStatus, error = undefined) {
   const info = {};
   info['testName'] = testName;
   info['testStatus'] = await getTestStatus(testStatus);
-  if (error) 
+
+  if (error !== undefined && error !== null && error !== 'null') 
     info['error'] = error;
   info['sessionId'] = sessionId;
   info['testId'] = tid;
@@ -63,14 +89,18 @@ async function setTestInfo(sessionId, testName, testStatus, error = undefined) {
 
 }
 
-async function setCmdData(sessionId, key, value, args) {
-  let filePath = await getSessionFilePath(sessionId);
-  let file = editJsonFile(filePath);
+async function setCmdData(driver, key, value, args) {
+  let filePath = await getSessionFilePath(driver.sessionId);
+  if(!fs.existsSync(filePath)){
+    await initReport(driver);  
+  }
+
+  let file = await editJsonFile(filePath);
   const cmdId = await uuidv4();
   file.set(`data.${key + cmdId}.img`, `${value}`);
   file.set(`data.${key + cmdId}.args`, args);
-  file.append('cmd', [key, cmdId]);
-  file.save();
+  await file.append('cmd', [key, cmdId]);
+  await file.save();
 }
 
 async function buildReport() {
@@ -99,8 +129,8 @@ async function buildReport() {
 
 module.exports = {
   getSessionFilePath,
-  initReport,
   setCmdData,
   buildReport,
   setTestInfo,
+  initReport
 };

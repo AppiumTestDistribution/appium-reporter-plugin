@@ -33,43 +33,19 @@ export class ReportPlugin extends BasePlugin {
   static async setTestInfo(req, res) {
         let body = req.body;
         let sessionId = body.sessionId;
+        let error = body.error;  
         let testName = body.testName;
-        let testStatus = body.testStatus; 
-        let error = body.error;        
+        let testStatus = body.testStatus;    
         await Reporter.setTestInfo(sessionId, testName, testStatus, error);
         res.send();
   }
 
   async createSession(next) {
-    const result = await next();
-    const deviceDetails = {};
-    let sessionId;
-    try {
-      sessionId = result.value[0];
-      const caps = result.value[1];
-      deviceDetails['platformName'] = caps.platformName ?? undefined;
-      deviceDetails['deviceModel'] = caps.deviceModel ?? undefined;
-      deviceDetails['deviceManufacturer'] = caps.deviceManufacturer ?? undefined;
-      deviceDetails['deviceApiLevel'] = caps.deviceApiLevel ?? undefined;
-      deviceDetails['platformVersion'] = caps.platformVersion ?? undefined;
-      deviceDetails['deviceName'] = caps.deviceName ?? undefined;
-      deviceDetails['deviceUDID'] = caps.deviceUDID ?? undefined;
-      if (deviceDetails['platformName'].toLowerCase() === 'ios') {
-        deviceDetails['deviceManufacturer'] = 'APPLE';
-        deviceDetails['deviceModel'] = deviceDetails['deviceName'];
-      }
-    } catch(err) {
-      log.error(`Failed to extract sessionId from session Object from result: \n ${JSON.stringify(result)}`);
-
-      log.error(err);
-      throw err;
-    }
-    Reporter.initReport(sessionId, deviceDetails);
+    const result = await next();    
     return result;
   }
 
   async handle(next, driver, commandName, ...args) {
-
     log.info(`session: ${driver.sessionId}; cmd ${commandName}; processing command: ${commandName}`);
     const start = process.hrtime();
     let result;
@@ -128,7 +104,7 @@ export class ReportPlugin extends BasePlugin {
       log.info(`session: ${driver.sessionId}; cmd ${commandName}; time took to process image: ${prettyHrtime(afterimgProcess)}`);
   
       const beforeWriteToFile = process.hrtime();
-      await Reporter.setCmdData(driver.sessionId, commandName, img, data);
+      await Reporter.setCmdData(driver, commandName, img, data);
       const afterWriteToFile = process.hrtime(beforeWriteToFile);
       log.info(`session: ${driver.sessionId}; cmd ${commandName}; Time taken by plugin to store data: ${prettyHrtime(afterWriteToFile)}`);
     }

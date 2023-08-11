@@ -26,8 +26,8 @@ Start appium server with plugin
 
 
 Sample implementation can be found @
-1. JS Implementation -> `test/demo/demo.spec.js` and  `test/demo/base.js`
-2. Java Implementation -> `test/AppiumReportPluginDemo`
+1. JS Implementation -> https://github.com/AppiumTestDistribution/appium-reporter-plugin/tree/main/examples\js\AppiumReportPluginDemo
+2. Java Implementation -> https://github.com/AppiumTestDistribution/appium-reporter-plugin/tree/main/examples\java\AppiumReportPluginDemo
 
 ### Mappings / Commands
 

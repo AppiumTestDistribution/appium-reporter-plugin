@@ -44,9 +44,10 @@ async function createReportFile(sessionId, deviceDetails) {
       await file.save();
       log.info(`Data file for session ${sessionId} created at ${filePath}`);
     } else {
+      log.error(`Failed to create session data file for session ${sessionId}`);
       throw 'Report creation failed because of invalid session ID';
     }
-  } catch(e){
+  } catch(e) {
     log.error(`Error in creating session data file for session ${sessionId} \\n ${e}`);
     throw e;
   }
@@ -65,36 +66,47 @@ async function getTestStatus(status){
 }
 
 async function setTestInfo(sessionId, testName, testStatus, error = undefined) {
-  const tid = await uuidv4();  
+  try {
+    const tid = await uuidv4();  
 
-  if( sessionId !== undefined &&  sessionId !== null && sessionId !== 'null') {
-    const oldFileName = await getSessionFilePath(sessionId);
-    const newFileName = await getSessionFilePath(tid);
-    await fs.renameSync(oldFileName, newFileName);
-  } else if (sessionId === undefined || sessionId === null) {
-    sessionId = await uuidv4();
+    if( sessionId !== undefined &&  sessionId !== null && sessionId !== 'null') {
+      const oldFileName = await getSessionFilePath(sessionId);
+      const newFileName = await getSessionFilePath(tid);
+      await fs.renameSync(oldFileName, newFileName);
+    } else if (sessionId === undefined || sessionId === null) {
+      sessionId = await uuidv4();
+      log.info(`SessionId is null/undefined. Handling it by creating uuid (${sessionId}) to track test information`);
+    }
+
+    let file = await editJsonFile(jsonReportPath);
+    const info = {};
+    info['testName'] = testName;
+    info['testStatus'] = await getTestStatus(testStatus);
+    log.info(`${sessionId}: Test Status and Name are recorded`);
+
+    if (error !== undefined && error !== null && error !== 'null') {
+      info['error'] = error;
+      log.info(`${sessionId}: Test error is recorded`);
+    }
+    info['sessionId'] = sessionId;
+    info['testId'] = tid;
+    log.info(`${sessionId}: Test sessionId and testId are recorded`);
+    await file.append('tests', info);
+    await file.save();
+    return {status: 200, content: 'Test information saved'};
+  } catch(error){
+    const content = `${sessionId}: Failed to Save test information ${error}`;
+    log.error(content);
+    return {'status': 500, 'content': content};
   }
-
-  let file = await editJsonFile(jsonReportPath);
-  const info = {};
-  info['testName'] = testName;
-  info['testStatus'] = await getTestStatus(testStatus);
-
-  if (error !== undefined && error !== null && error !== 'null') 
-    info['error'] = error;
-  info['sessionId'] = sessionId;
-  info['testId'] = tid;
-  await file.append('tests', info);
-  await file.save();
-
 }
 
 async function setCmdData(driver, key, value, args) {
   let filePath = await getSessionFilePath(driver.sessionId);
+  
   if(!fs.existsSync(filePath)){
     await initReport(driver);  
   }
-
   let file = await editJsonFile(filePath);
   const cmdId = await uuidv4();
   file.set(`data.${key + cmdId}.img`, `${value}`);
@@ -104,27 +116,42 @@ async function setCmdData(driver, key, value, args) {
 }
 
 async function buildReport() {
-  let file = await editJsonFile(jsonReportPath);
-  let allData = await file.toObject();
-  allData.sessions = {};
-  const testIds = allData.tests.map(y => [y.testId, y.sessionId]);
-  for(let i = 0; i < testIds.length; i++){
-    const testId = testIds[i][0];
-    const sessionFilePath = `${reportPath}/${testId}.json`;
-    const sessionData = await editJsonFile(sessionFilePath);
-    allData.sessions[testId] = sessionData.toObject();
+  try{
+    let file = await editJsonFile(jsonReportPath);
+    let allData = await file.toObject();
+    allData.sessions = {};
+    if(allData.tests === null || allData.tests === undefined || allData.tests.length === 0){
+      throw 'Report file doesnt have any test information!';
+    }
+    const testIds = allData.tests.map(y => [y.testId, y.sessionId]);
+    for(let i = 0; i < testIds.length; i++){
+      const testId = testIds[i][0];
+      const sessionFilePath = `${reportPath}/${testId}.json`;
+      const sessionData = await editJsonFile(sessionFilePath);
+      allData.sessions[testId] = sessionData.toObject();
+    }
+
+    const htmlTemplate = await fs.readFileSync(htmlTemplatePath, 'utf8');
+    let dom = await parse(htmlTemplate);
+
+    const bundlejs = await fs.readFileSync(bundlePath, 'utf8');
+
+    const dataScript = `<script>
+      const data = ${JSON.stringify(allData)};
+      ${bundlejs} </script>`;
+    dom.getElementById('root').innerHTML = dataScript;
+    const status = 200;
+    const content = dom.toString();
+    return { 'status': status, 'content': content};
+  } catch(err){
+    const errorMessage = `Error building report: ${err}. 
+    Please make sure "/setTestInfo" is called before "/getReport". 
+    refer: https://github.com/AppiumTestDistribution/appium-reporter-plugin#mappings--commands`;
+    log.error(errorMessage);
+    const status = 500;
+    const content = errorMessage;
+    return { 'status': status, 'content': content};
   }
-
-  const htmlTemplate = await fs.readFileSync(htmlTemplatePath, 'utf8');
-  let dom = await parse(htmlTemplate);
-
-  const bundlejs = await fs.readFileSync(bundlePath, 'utf8');
-
-  const dataScript = `<script>
-    const data = ${JSON.stringify(allData)};
-    ${bundlejs} </script>`;
-  dom.getElementById('root').innerHTML = dataScript;
-  return dom.toString();
 }
 
 module.exports = {

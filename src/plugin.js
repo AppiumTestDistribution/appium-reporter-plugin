@@ -19,15 +19,24 @@ export class ReportPlugin extends BasePlugin {
   }
 
   static async getReport(req, res) {
-    res.send(await Reporter.buildReport());
+    log.info('In getReport');
+    const report = await Reporter.buildReport();
+    res.status(report.status).send(report.content);
   }
 
   static async deleteReportData(req, res) {
-    if (await fs.existsSync(reportPath)) {
-      await fse.emptyDirSync(reportPath);
-      log.info(`${reportPath} is deleted.`);
-    } 
-    res.send();
+    try {
+
+      if (await fs.existsSync(reportPath)) {
+        await fse.emptyDirSync(reportPath);
+        log.info(`${reportPath} is deleted.`);
+      } 
+      res.status(200).send();
+    }catch(error){
+      log.error(` Error in deleteing deleteReportData: ${error}`);
+      res.status(500).send(error);
+    }
+    
   }
 
   static async setTestInfo(req, res) {
@@ -36,8 +45,9 @@ export class ReportPlugin extends BasePlugin {
         let error = body.error;  
         let testName = body.testName;
         let testStatus = body.testStatus;    
-        await Reporter.setTestInfo(sessionId, testName, testStatus, error);
-        res.send();
+        log.info(`In setTestInfo with ${JSON.stringify(req.body)}`);
+        const response = await Reporter.setTestInfo(sessionId, testName, testStatus, error);
+        res.status(response.status).send(response.content);
   }
 
   async createSession(next) {

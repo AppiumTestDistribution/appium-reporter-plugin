@@ -2,8 +2,9 @@
  Junit5 - unit testing fw
  unirest - for making api calls to reporter plugin bindings.
 
-#### Install appium-reporter-plugin
+#### Install driver and appium-reporter-plugin
 ```shell
+appium driver install uiautomator2
 appium plugin install --source=npm appium-reporter-plugin
 ```
 

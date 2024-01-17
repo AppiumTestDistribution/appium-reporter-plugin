@@ -89,27 +89,30 @@ export class ReportPlugin extends BasePlugin {
       log.info(`session: ${driver.sessionId}; cmd ${commandName}; time appium took for screenshot: ${prettyHrtime(afterScreenshot)}`);
 
       const beforeimgProcess = process.hrtime();
-      const buffer = base64screenshot.split(';base64,').pop();
-      let imgBuffer = Buffer.from(buffer, 'base64');
 
-      let meta = await sharp(imgBuffer).metadata();
-
-      img = await sharp(imgBuffer);
-      if (meta.width > 500) {
-        img = await img.resize(500);
+      if(base64screenshot) {
+        const buffer = base64screenshot.split(';base64,').pop();
+        let imgBuffer = Buffer.from(buffer, 'base64');
+  
+        let meta = await sharp(imgBuffer).metadata();
+  
+        img = await sharp(imgBuffer);
+        if (meta.width > 500) {
+          img = await img.resize(500);
+        }
+  
+        img = await img
+          .toFormat('jpeg', { mozjpeg: true })
+          .toBuffer()
+          .then((data) => {
+            return data.toString('base64');
+          })
+          .catch((err) => {
+            log.error(`downsize issue ${err}`);
+            return null;
+          });
+        img = `data:image/jpeg;base64, ${img}`;
       }
-
-      img = await img
-        .toFormat('jpeg', { mozjpeg: true })
-        .toBuffer()
-        .then((data) => {
-          return data.toString('base64');
-        })
-        .catch((err) => {
-          log.error(`downsize issue ${err}`);
-          return null;
-        });
-      img = `data:image/jpeg;base64, ${img}`;
       const afterimgProcess = process.hrtime(beforeimgProcess);
       log.info(`session: ${driver.sessionId}; cmd ${commandName}; time took to process image: ${prettyHrtime(afterimgProcess)}`);
   

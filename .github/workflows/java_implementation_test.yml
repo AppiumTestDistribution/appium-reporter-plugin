@@ -1,0 +1,59 @@
+name: Run Java Implementation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+
+    name:  Tests - ${{ matrix.os }} - ${{ matrix.node_version }} - ${{ matrix.java-version }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+        java-version: [11]
+        mvn-version: [3.9.5]
+        os: [ubuntu-latest]
+        
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Setup Java ${{ matrix.java-version }}
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: ${{ matrix.java-version }}
+
+      - name: Setup Maven ${{ matrix.mvn-version }}
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'maven'
+          java-version: ${{ matrix.mvn-version }}          
+          
+      - name: Install Appium
+        run: npm i --location=global appium
+
+      - name: Install uiautomator2
+        run: appium driver install uiautomator2
+
+      - name: Install plugin
+        run: npm run install-plugin
+
+      - name: Start appium server
+        run: appium --use-plugins=appium-reporter-plugin
+
+      - name: navigate to Java Implementation
+        run: cd examples/java/AppiumReportPluginDemo
+
+      - name: run tests
+        run: mvn test     

@@ -16,7 +16,6 @@ jobs:
       matrix:
         node-version: [16.x]
         java-version: [11]
-        mvn-version: [3.9.5]
         os: [ubuntu-latest]
         
     steps:
@@ -32,14 +31,8 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: ${{ matrix.java-version }}
+          java-version: ${{ matrix.java-version }}      
 
-      - name: Setup Maven ${{ matrix.mvn-version }}
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'maven'
-          java-version: ${{ matrix.mvn-version }}          
-          
       - name: Install Appium
         run: npm i --location=global appium
 

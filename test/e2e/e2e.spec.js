@@ -1,6 +1,6 @@
 import path from 'path';
 import { remote as wdio } from 'webdriverio';
-import { pluginE2EHarness } from 'appium/test';
+import { pluginE2EHarness } from '@appium/plugin-test-support';
 import { setTestInfo, getReport, deleteReportData } from './base';
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');

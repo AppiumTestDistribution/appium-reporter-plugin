@@ -42,7 +42,7 @@ For mapping test information to data collected, server binding `POST: /setTestIn
 | sessionId   | driver's sessionId             | Mandatory | driver's sessionId or null if session is not created (pendig test)  |
 | testName    | Name of the test               | Mandatory | any string                                                          |
 | testStatus  | Test execution status          | Mandatory | PASSED, FAILED, PENDING, All other string considered as unknown     |
-| error       | Reason for test Failure        | Optinal   | any string                                                          |
+| error       | Reason for test Failure        | Optional   | any string                                                          |
 
 ex: 
 ```
